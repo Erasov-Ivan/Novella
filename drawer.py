@@ -47,10 +47,12 @@ class Drawer:
         text_surface = self.font.render(title, True, THECOLORS[self.text_color])
         if centered:
             text_rect = text_surface.get_rect(
-                center=(self.screen_width / 2, self.screen_height / 2 - self.font.get_height()))
+                center=(self.screen_width / 2, self.screen_height / 2 - self.font.get_height())
+            )
         else:
             text_rect = text_surface.get_rect(
-                center=(self.screen_width / 2, self.screen_height - self.text_area_height / 2 - self.font.get_height()))
+                center=(self.screen_width / 2, self.screen_height - self.text_area_height / 2 - self.font.get_height())
+            )
         self.screen.blit(text_surface, text_rect)
 
     def draw_text(self, text: str, start_offset_from_middle: int, centered: bool = False):

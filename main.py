@@ -2,6 +2,7 @@ import pygame
 from chapter import Chapter
 from drawer import Drawer
 from choices import Choices
+from dairy import Dairy
 from chapters.chapter_1.chapter_1 import chapter1
 
 pygame.init()
@@ -25,12 +26,19 @@ choices = Choices(
     font=FONT
 )
 
+dairy = Dairy(
+    screen=screen,
+    font=FONT
+)
+
 chapter = Chapter(
     drawer=drawer,
     choices=choices,
+    dairy=dairy,
     chapter=chapter1,
     path='chapters/chapter_1'
 )
+
 
 
 chapter.start()
@@ -46,6 +54,7 @@ while running:
             if event.button == 1:
                 chapter.process_button_click(mouse_position=mouse_position)
     chapter.choices.check_hover(mouse_position=mouse_position)
+    dairy.dairy_button.check_hover(mouse_position=mouse_position)
     chapter.show_current_state()
     pygame.display.flip()
 

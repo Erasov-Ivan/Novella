@@ -2,12 +2,17 @@ import pygame
 import time
 from drawer import Drawer
 from choices import Choices
+from dairy import Dairy
 
 
 class Chapter:
-    def __init__(self, drawer: Drawer, choices: Choices, chapter: dict, path: str, stats: dict = {}):
+    def __init__(
+            self, drawer: Drawer, choices: Choices, chapter: dict, dairy: Dairy,
+            path: str, stats: dict = {}
+    ):
         self.drawer = drawer
         self.choices = choices
+        self.dairy = dairy
         self.chapter = chapter
         self.stats = stats
         self.path = path
@@ -97,6 +102,7 @@ class Chapter:
         self.drawer.draw_current_background()
         self.drawer.show_current_text()
         self.choices.draw_current_buttons()
+        self.dairy.draw_button()
 
     def process_button_click(self, mouse_position: tuple[int, int]):
         index = self.choices.is_button_clicked(mouse_position=mouse_position)
@@ -132,7 +138,7 @@ class Chapter:
                 self.current_position = self.chapter.get(next_key)
                 if self.current_position is not None:
                     self.update_current_position()
-
-
-
+        else:
+            if self.dairy.dairy_button.is_clicked(mouse_position=mouse_position):
+                self.dairy.open_dairy()
 

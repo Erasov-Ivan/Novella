@@ -1,25 +1,24 @@
 import pygame
 from pygame.colordict import THECOLORS
+from utils import Button
 
 
-class Button:
+class AnswerButton(Button):
     def __init__(
             self, x: int, y: int, width: int, height: int, text: str, index: int,
             font: pygame.font.Font, text_color: str = 'white',
             color: str = 'gray40', hover_color: str = 'gray20', border_color: str = 'black'
     ):
-        self.rect = pygame.Rect(x, y, width, height)
+        super().__init__(
+            x=x, y=y, width=width, height=height, color=color, hover_color=hover_color, border_color=border_color
+        )
         self.text = text
         self.font = font
         self.index = index
         try:
             self.text_color = THECOLORS[text_color]
-            self.color = THECOLORS[color]
-            self.hover_color = THECOLORS[hover_color]
-            self.border_color = THECOLORS[border_color]
         except KeyError:
-            raise ValueError(f'Unknown color: {color}, {hover_color}, {border_color}')
-        self.is_hovered = False
+            raise ValueError(f'Unknown color: {text_color}')
 
     def draw(self, surface):
         color = self.hover_color if self.is_hovered else self.color
@@ -29,13 +28,6 @@ class Button:
         text_surface = self.font.render(self.text, True, self.text_color)
         text_rect = text_surface.get_rect(center=self.rect.center)
         surface.blit(text_surface, text_rect)
-
-    def check_hover(self, mouse_position: tuple[float, float]):
-        self.is_hovered = self.rect.collidepoint(mouse_position)
-        return self.is_hovered
-
-    def is_clicked(self, mouse_position: tuple[float, float]) -> bool:
-        return self.rect.collidepoint(mouse_position)
 
 
 class Choices:
@@ -54,7 +46,7 @@ class Choices:
         self.borders_interval = borders_interval
         self.right_interval = right_interval
         self.height_size = self.font.get_height() + borders_interval * 2
-        self.buttons: list[Button] = []
+        self.buttons: list[AnswerButton] = []
 
     def update_buttons(self, buttons: list[dict], text_centered: bool):
         self.buttons = []
@@ -73,7 +65,7 @@ class Choices:
             caption = buttons[i].get('caption', '')
             if not buttons[i].get('done', False):
                 self.buttons.append(
-                    Button(
+                    AnswerButton(
                         text=caption,
                         x=start_x,
                         y=start_y,

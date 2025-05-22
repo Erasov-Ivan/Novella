@@ -41,7 +41,7 @@ chapter1 = {
                         'repeat': True
                     },
                     {
-                        'caption': 'Тут какой то длинный выбор',
+                        'caption': 'Выбор 2',
                         'character': 'Персонаж',
                         'words': 'Да',
                         'stats': {
