@@ -145,6 +145,7 @@ class Chapter:
                     self.repeat += 1
             elif (next_key := result.get('label', None)) is not None:
                 self.current_position = self.chapter.get(next_key)
+                self.current_text_position = 0
                 if self.current_position is not None:
                     self.update_current_position()
         else:
