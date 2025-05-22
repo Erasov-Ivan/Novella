@@ -44,7 +44,7 @@ while running:
             chapter.next()
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                pass
+                chapter.process_button_click(mouse_position=mouse_position)
     chapter.choices.check_hover(mouse_position=mouse_position)
     chapter.show_current_state()
     pygame.display.flip()

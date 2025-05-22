@@ -34,8 +34,8 @@ class Button:
         self.is_hovered = self.rect.collidepoint(mouse_position)
         return self.is_hovered
 
-    def is_clicked(self, mouse_pos, mouse_click):
-        return self.rect.collidepoint(mouse_pos) and mouse_click
+    def is_clicked(self, mouse_position: tuple[float, float]) -> bool:
+        return self.rect.collidepoint(mouse_position)
 
 
 class Choices:
@@ -91,6 +91,12 @@ class Choices:
     def check_hover(self, mouse_position: tuple[int, int]):
         for button in self.buttons:
             button.check_hover(mouse_position=mouse_position)
+
+    def is_button_clicked(self, mouse_position: tuple[int, int]) -> dict | None:
+        for button in self.buttons:
+            if button.is_clicked(mouse_position=mouse_position):
+                return button.action
+        return None
 
 
 

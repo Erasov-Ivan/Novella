@@ -36,16 +36,18 @@ chapter1 = {
                 'choices': [
                     {
                         'caption': 'Выбор 1',
-                        'text': 'Неверный выбор',
+                        'title': 'Тут можно и заголовок',
+                        'words': 'Неверный выбор',
                         'repeat': True
                     },
                     {
                         'caption': 'Тут какой то длинный выбор',
-                        'text': 'Да',
+                        'character': 'Персонаж',
+                        'words': 'Да',
                     },
                     {
                         'caption': 'Выбор 3',
-                        'label': 1
+                        'label': 'start'
                     },
                 ]
             }
