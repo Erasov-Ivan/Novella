@@ -25,7 +25,7 @@ chapter1 = {
             },
         ],
         'background': {
-            'image': '1.webp'
+            'image': 'images/1.webp'
         },
         'next': 2
     },
