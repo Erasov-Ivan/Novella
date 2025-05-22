@@ -1,7 +1,7 @@
 import pygame
 from chapter import Chapter
 from drawer import Drawer
-import time
+from chapter_1 import chapter1
 
 pygame.init()
 
@@ -18,36 +18,6 @@ drawer = Drawer(
     font=FONT,
 )
 
-chapter1 = {
-    'start': {
-        'texts': [
-            {
-                'words': 'Придя в себя после головокружительного путешествия, вы оглядываетесь по сторонам',
-                'centered': True
-            }
-        ],
-        'background': {
-            'color': 'black'
-        },
-        'next': 1
-    },
-    1: {
-        'texts': [
-            {'words': 'Узкие улочки и дома, сверху донизу выложенные камни, журчащие по тем же улицам ручейки сточных труб'},
-            {'words': 'По дороге не спеша идут знатные дамы, одеты в роскошные платья 18 века и их кавалеры'},
-            {'words': 'Мимо проезжают кареты, запряженные лошадьми'},
-            {'words': 'По теневой стороны улице мимо снуют обычные горожане, которые явно торопятся по поручениям своих господ'},
-            {
-                'character': 'Мысли',
-                'words': 'Какая очевидная разница… Прислуга и знать. Идут по одной дороге, но живут совершенно разными жизнями.',
-                'centered': True
-            },
-        ],
-        'background': {
-            'image': '1.webp'
-        }
-    }
-}
 
 chapter = Chapter(
     drawer=drawer,

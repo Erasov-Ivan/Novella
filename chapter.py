@@ -1,6 +1,6 @@
 import pygame
 import time
-from drawer import Drawer
+from drawer import Drawer, Button
 
 
 class Chapter:
@@ -13,11 +13,15 @@ class Chapter:
         self.current_text_position = 0
         if self.current_position is None:
             raise ValueError("No start point")
+        self.current_choice: list[Button] = []
 
     def start(self):
         pass
 
     def next(self):
+        if len(self.current_choice) > 0:
+            return
+
         texts = self.current_position.get('texts')
         if texts is not None:
             self.current_text_position += 1
@@ -52,18 +56,15 @@ class Chapter:
                 words = texts[self.current_text_position].get('words', '')
                 character = texts[self.current_text_position].get('character', None)
                 title = texts[self.current_text_position].get('title', None)
-                centered = texts[self.current_text_position].get('centered', False)
                 if title is not None and character is not None:
                     words = f'{character}: {words}'
+                centered = texts[self.current_text_position].get('centered', False)
+                delay = texts[self.current_text_position].get('delay', None)
+                if delay is None:
+                    delay = 0.005
 
-                delay = 0.005
-                for letter in range(len(words) + 1):
-                    self.drawer.draw_current_background()
-                    self.drawer.draw_text(text=words[:letter], centered=centered)
-                    if title is not None:
-                        self.drawer.draw_text_title(title=title, centered=centered)
-                    elif character is not None:
-                        self.drawer.draw_text_title(title=f'{character}:', centered=centered)
-                    time.sleep(delay)
-                    pygame.display.flip()
+                self.drawer.show_text_appearance_animation(
+                    words=words, character=character, title=title, centered=centered, delay=delay
+                )
+
 
