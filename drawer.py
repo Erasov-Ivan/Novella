@@ -73,7 +73,11 @@ class Drawer:
         self.screen.blit(text_surface, text_rect)
 
     def update_current_text(
-            self, words: str, character: str | None, title: str | None, centered: bool, delay: float | None
+            self, words: str,
+            character: str | None = None,
+            title: str | None = None,
+            centered: bool = False,
+            delay: float | None = 0.005
     ):
         self.current_words = words
         self.current_character = character

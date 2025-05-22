@@ -5,10 +5,11 @@ from choices import Choices
 
 
 class Chapter:
-    def __init__(self, drawer: Drawer, choices: Choices, chapter: dict, path: str):
+    def __init__(self, drawer: Drawer, choices: Choices, chapter: dict, path: str, stats: dict = {}):
         self.drawer = drawer
         self.choices = choices
         self.chapter = chapter
+        self.stats = stats
         self.path = path
 
         self.current_position = self.chapter.get('start', None)
@@ -103,6 +104,19 @@ class Chapter:
             self.choices.buttons = []
             result = self.current_position['texts'][self.current_text_position]['choices'][index]
             self.current_position['texts'][self.current_text_position]['choices'][index]['done'] = True
+            if (stats := result.get('stats', None)) is not None:
+                for key, value in stats.items():
+                    if key not in self.stats.keys():
+                        self.stats[key] = value
+                    else:
+                        self.stats[key] += value
+                    self.drawer.update_current_text(
+                        words=f'{key}: {f"+{value}" if value >= 0 else value}',
+                        centered=True,
+                        delay=0.01
+                    )
+                    self.drawer.show_current_text_appearance_animation()
+                    time.sleep(1)
             if result.get('words', None) is not None:
                 self.drawer.update_current_text(
                     words=result.get('words', ''),
