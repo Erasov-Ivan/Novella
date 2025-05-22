@@ -4,14 +4,14 @@ from pygame.colordict import THECOLORS
 
 class Button:
     def __init__(
-            self, x: int, y: int, width: int, height: int, text: str, action: dict,
+            self, x: int, y: int, width: int, height: int, text: str, index: int,
             font: pygame.font.Font, text_color: str = 'white',
             color: str = 'gray40', hover_color: str = 'gray20', border_color: str = 'black'
     ):
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
         self.font = font
-        self.action = action
+        self.index = index
         try:
             self.text_color = THECOLORS[text_color]
             self.color = THECOLORS[color]
@@ -69,20 +69,21 @@ class Choices:
             start_x = self.screen_width - max_width - self.right_interval
             start_y = (self.screen_height - self.text_area_height) // 2 - (
                     len(buttons) * (self.height_size + self.height_interval) // 2)
-        for button in buttons:
-            caption = button.get('caption', '')
-            self.buttons.append(
-                Button(
-                    text=caption,
-                    x=start_x,
-                    y=start_y,
-                    width=max_width + self.borders_interval * 2,
-                    height=self.height_size,
-                    action=button,
-                    font=self.font
+        for i in range(len(buttons)):
+            caption = buttons[i].get('caption', '')
+            if not buttons[i].get('done', False):
+                self.buttons.append(
+                    Button(
+                        text=caption,
+                        x=start_x,
+                        y=start_y,
+                        width=max_width + self.borders_interval * 2,
+                        height=self.height_size,
+                        index=i,
+                        font=self.font
+                    )
                 )
-            )
-            start_y += self.height_size + self.height_interval
+                start_y += self.height_size + self.height_interval
 
     def draw_current_buttons(self):
         for button in self.buttons:
@@ -92,10 +93,10 @@ class Choices:
         for button in self.buttons:
             button.check_hover(mouse_position=mouse_position)
 
-    def is_button_clicked(self, mouse_position: tuple[int, int]) -> dict | None:
+    def is_button_clicked(self, mouse_position: tuple[int, int]) -> int | None:
         for button in self.buttons:
             if button.is_clicked(mouse_position=mouse_position):
-                return button.action
+                return button.index
         return None
 
 

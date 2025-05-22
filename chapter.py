@@ -98,9 +98,11 @@ class Chapter:
         self.choices.draw_current_buttons()
 
     def process_button_click(self, mouse_position: tuple[int, int]):
-        result = self.choices.is_button_clicked(mouse_position=mouse_position)
-        if result is not None:
+        index = self.choices.is_button_clicked(mouse_position=mouse_position)
+        if index is not None:
             self.choices.buttons = []
+            result = self.current_position['texts'][self.current_text_position]['choices'][index]
+            self.current_position['texts'][self.current_text_position]['choices'][index]['done'] = True
             if result.get('words', None) is not None:
                 self.drawer.update_current_text(
                     words=result.get('words', ''),
