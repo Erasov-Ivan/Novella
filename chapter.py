@@ -25,6 +25,7 @@ class Chapter:
         self.repeat = 0
 
     def start(self):
+        self.update_dairy()
         self.update_current_text()
         self.update_current_background()
         self.drawer.show_current_text_appearance_animation()
@@ -42,12 +43,14 @@ class Chapter:
         if texts is not None:
             self.current_text_position += 1
             if self.current_text_position < len(texts):
+                self.update_dairy()
                 self.update_current_text()
                 self.drawer.show_current_text_appearance_animation()
                 self.update_current_choices()
                 self.choices.draw_current_buttons()
                 return
         if (next_key := self.current_position.get('next')) is not None:
+            self.update_dairy()
             self.current_text_position = 0
             self.current_position = self.chapter.get(next_key)
             self.update_current_position()
@@ -110,6 +113,12 @@ class Chapter:
             self.choices.buttons = []
             result = self.current_position['texts'][self.current_text_position]['choices'][index]
             self.current_position['texts'][self.current_text_position]['choices'][index]['done'] = True
+
+            plot = result.get('plot', {})
+            tasks = result.get('tasks', {})
+            theory = result.get('theory', {})
+            self.dairy.update(plot=plot, tasks=tasks, theory=theory)
+
             if (stats := result.get('stats', None)) is not None:
                 for key, value in stats.items():
                     if key not in self.stats.keys():
@@ -141,4 +150,13 @@ class Chapter:
         else:
             if self.dairy.dairy_button.is_clicked(mouse_position=mouse_position):
                 self.dairy.open_dairy()
+
+    def update_dairy(self):
+        texts = self.current_position.get('texts')
+        if texts is not None:
+            if self.current_text_position < len(texts):
+                plot = texts[self.current_text_position].get('plot', {})
+                tasks = texts[self.current_text_position].get('tasks', {})
+                theory = texts[self.current_text_position].get('theory', {})
+                self.dairy.update(plot=plot, tasks=tasks, theory=theory)
 

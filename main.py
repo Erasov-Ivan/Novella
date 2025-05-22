@@ -9,10 +9,12 @@ pygame.init()
 
 SCREEN_WIDTH = 1600
 SCREEN_HEIGHT = 900
+FPS = 10
 
 FONT = pygame.font.SysFont('Arial', 24)
 screen = pygame.display.set_mode(size=(SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Курсач")
+clock = pygame.time.Clock()
 
 drawer = Drawer(
     screen=screen,
@@ -58,6 +60,7 @@ while running:
     chapter.show_current_state()
     pygame.display.flip()
 
+    clock.tick(FPS)
 
 pygame.quit()
 
