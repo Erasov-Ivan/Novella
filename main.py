@@ -2,7 +2,7 @@ import pygame
 from chapter import Chapter
 from drawer import Drawer
 from choices import Choices
-from chapter_1.chapter_1 import chapter1
+from chapters.chapter_1.chapter_1 import chapter1
 
 pygame.init()
 
@@ -29,7 +29,7 @@ chapter = Chapter(
     drawer=drawer,
     choices=choices,
     chapter=chapter1,
-    path='chapter_1'
+    path='chapters/chapter_1'
 )
 
 
