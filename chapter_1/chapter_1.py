@@ -33,14 +33,14 @@ chapter1 = {
         'texts': [
             {
                 'words': 'Выбирите',
-                'choice': [
+                'choices': [
                     {
                         'caption': 'Выбор 1',
                         'text': 'Неверный выбор',
                         'repeat': True
                     },
                     {
-                        'caption': 'Выбор 2',
+                        'caption': 'Тут какой то длинный выбор',
                         'text': 'Да',
                     },
                     {

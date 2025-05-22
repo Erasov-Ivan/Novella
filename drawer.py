@@ -4,42 +4,6 @@ import time
 import re
 
 
-class Button:
-    def __init__(
-            self, x: int, y: int, width: int, height: int, text: str, action: dict,
-            font: pygame.font.Font, text_color: str = 'white',
-            color: str = 'gray66', hover_color: str = 'gray85', border_color: str = 'black'
-    ):
-        self.rect = pygame.Rect(x, y, width, height)
-        self.text = text
-        self.font = font
-        self.action = action
-        try:
-            self.text_color = THECOLORS[text_color]
-            self.color = THECOLORS[color]
-            self.hover_color = THECOLORS[hover_color]
-            self.border_color = THECOLORS[border_color]
-        except KeyError:
-            raise ValueError(f'Unknown color: {color}, {hover_color}, {border_color}')
-        self.is_hovered = False
-
-    def draw(self, surface):
-        color = self.hover_color if self.is_hovered else self.color
-        pygame.draw.rect(surface, color, self.rect, border_radius=5)
-        pygame.draw.rect(surface, self.border_color, self.rect, 2, border_radius=5)
-
-        text_surface = self.font.render(self.text, True, self.text_color)
-        text_rect = text_surface.get_rect(center=self.rect.center)
-        surface.blit(text_surface, text_rect)
-
-    def check_hover(self, mouse_pos):
-        self.is_hovered = self.rect.collidepoint(mouse_pos)
-        return self.is_hovered
-
-    def is_clicked(self, mouse_pos, mouse_click):
-        return self.rect.collidepoint(mouse_pos) and mouse_click
-
-
 class Drawer:
     def __init__(
             self, screen: pygame.Surface,
@@ -71,6 +35,11 @@ class Drawer:
         self.text_overlay_surface.fill((0, 0, 0, self.text_background_darkness))
 
         self.current_background: pygame.Surface | str = self.default_background
+        self.current_words = ''
+        self.current_character = ''
+        self.current_title = ''
+        self.current_centered = False
+        self.current_delay = 0.005
 
     def draw_text_title(self, title: str, centered: bool = False):
         if title is None:
@@ -103,7 +72,16 @@ class Drawer:
         self.screen.blit(self.text_overlay_surface, text_overlay_react)
         self.screen.blit(text_surface, text_rect)
 
-    def update_background(self, image: str = None, color: str = None):
+    def update_current_text(self, words: str, character: str, title: str, centered: bool, delay: float):
+        self.current_words = words
+        self.current_character = character
+        self.current_title = title
+        self.current_centered = centered
+        self.current_delay = delay
+        if self.current_delay is None:
+            self.current_delay = 0.005
+
+    def update_current_background(self, image: str = None, color: str = None):
         if image is None and color is None:
             self.current_background = self.default_background
         elif color is not None:
@@ -131,16 +109,13 @@ class Drawer:
             except KeyError:
                 self.screen.fill(THECOLORS[self.default_background])
 
-    def show_text_appearance_animation(
-            self, words: str, title: str, character: str, centered: bool, delay: float = 0.005
-    ):
-        if title is not None and character is not None:
-            words = f'{character}: {words}'
-        elif title is None and character is not None:
-            title = character
+    def show_current_text_appearance_animation(self):
+        if self.current_character is not None:
+            words = f'{self.current_character}: {self.current_words}'
+        else:
+            words = self.current_words
         cleared_words = re.sub(r'\{.*?}', '', words)
         cleared_words_len = len(cleared_words)
-        words_len = len(words)
         start_offset_from_middle = self.font.size(words[:len(cleared_words) // 2])[0]
         letter = -1
         cleared_words_index = 0
@@ -157,12 +132,28 @@ class Drawer:
             self.draw_current_background()
             self.draw_text(
                 text=cleared_words[:cleared_words_index],
-                centered=centered,
+                centered=self.current_centered,
                 start_offset_from_middle=start_offset_from_middle
             )
-            self.draw_text_title(title=title, centered=centered)
+            self.draw_text_title(title=self.current_title, centered=self.current_centered)
             letter += 1
             cleared_words_index += 1
 
-            time.sleep(delay)
+            time.sleep(self.current_delay)
             pygame.display.flip()
+
+    def show_current_text(self):
+        if self.current_character is not None:
+            words = f'{self.current_character}: {self.current_words}'
+        else:
+            words = self.current_words
+        cleared_words = re.sub(r'\{.*?}', '', words)
+        start_offset_from_middle = self.font.size(words[:len(cleared_words) // 2])[0]
+        self.draw_current_background()
+        self.draw_text(
+            text=cleared_words,
+            centered=self.current_centered,
+            start_offset_from_middle=start_offset_from_middle
+        )
+        self.draw_text_title(title=self.current_title, centered=self.current_centered)
+

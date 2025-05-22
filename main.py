@@ -1,6 +1,7 @@
 import pygame
 from chapter import Chapter
 from drawer import Drawer
+from choices import Choices
 from chapter_1.chapter_1 import chapter1
 
 pygame.init()
@@ -18,22 +19,36 @@ drawer = Drawer(
     font=FONT,
 )
 
+choices = Choices(
+    screen=screen,
+    text_area_height=100,
+    font=FONT
+)
 
 chapter = Chapter(
     drawer=drawer,
+    choices=choices,
     chapter=chapter1,
     path='chapter_1'
 )
 
 
-chapter.show_current_position()
+chapter.start()
 running = True
 while running:
+    mouse_position = pygame.mouse.get_pos()
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             chapter.next()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                pass
+    chapter.choices.check_hover(mouse_position=mouse_position)
+    chapter.show_current_state()
+    pygame.display.flip()
+
 
 pygame.quit()
 
