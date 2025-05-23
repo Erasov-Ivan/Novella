@@ -3,7 +3,7 @@ from chapter import Chapter
 from drawer import Drawer
 from choices import Choices
 from dairy import Dairy
-from chapters.chapter_1.chapter_1 import chapter1
+import json
 
 pygame.init()
 
@@ -33,6 +33,8 @@ dairy = Dairy(
     font=FONT
 )
 
+with open('chapters/chapter_1/chapter.json', 'r', encoding='utf-8-sig') as f:
+    chapter1 = json.load(f)
 chapter = Chapter(
     drawer=drawer,
     choices=choices,

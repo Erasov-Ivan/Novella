@@ -13,9 +13,11 @@ STATS = 'stats'
 COLOR = 'color'
 IMAGE = 'image'
 
+# ------ PERSONS --------
 PERSON_MINDS = 'Мысли'
 PERSON_DAMA = 'Дама'
 PERSON_KAVALER = 'Кавалер'
+
 
 chapter1 = {
     'start': {
@@ -328,7 +330,12 @@ chapter1 = {
             {
                 WORDS: 'Проводя их глазами до края моста, вы решили все таки взглянуть на прощальный подарок',
                 CENTERED: True
+            },
+            {
+                WORDS: 'Попросив подсказать направление у прохожих, вы отправляетесь на главную площадь в поисках Эйлера',
+                CENTERED: True
             }
-        ]
+        ],
+        NEXT: 'монетная площадь'
     }
 }
