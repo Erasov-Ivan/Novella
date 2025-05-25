@@ -94,6 +94,8 @@ class Choice:
         self.plot = plot
         self.theory = theory
 
+        self.done = False
+
     def __dict__(self):
         if self.label is not None and self.words is not None:
             raise ValueError(f'Choice "{self.caption}" has label and words')
@@ -168,12 +170,10 @@ class Background:
 class Label:
     def __init__(
             self,
-            label: str,
             texts: list[Text],
             next: str | None = None,
             background: Background | None = None
     ):
-        self.label = label
         self.texts = texts
         self.next = next
         self.background = background
@@ -191,12 +191,12 @@ class Label:
 
 class ChapterGenerator:
     def __init__(self):
-        self.labels: list[Label] = []
+        self.labels: dict[str, Label] = {}
 
     def save(self, filename: str) -> None:
         result = {}
-        for label in self.labels:
-            result[label.label] = label.__dict__()
+        for key, value in self.labels.items():
+            result[key] = value.__dict__()
         with open(filename, 'w', encoding='utf-8-sig') as f:
             f.write(json.dumps(result, ensure_ascii=False))
 
@@ -289,11 +289,8 @@ class ChapterGenerator:
                     theory=theory
                 )
                 texts.append(text)
-            self.labels.append(
-                Label(
-                    label=label,
-                    background=background,
-                    texts=texts,
-                    next=next_label
-                )
+            self.labels[label] = Label(
+                background=background,
+                texts=texts,
+                next=next_label
             )

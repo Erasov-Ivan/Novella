@@ -1,95 +1,31 @@
-import pygame
-from pygame.colordict import THECOLORS
-from utils import Button
-
-
-class AnswerButton(Button):
-    def __init__(
-            self, x: int, y: int, width: int, height: int, text: str, index: int,
-            font: pygame.font.Font, text_color: str = 'white',
-            color: str = 'gray40', hover_color: str = 'gray20', border_color: str = 'black'
-    ):
-        super().__init__(
-            x=x, y=y, width=width, height=height, color=color, hover_color=hover_color, border_color=border_color
-        )
-        self.text = text
-        self.font = font
-        self.index = index
-        try:
-            self.text_color = THECOLORS[text_color]
-        except KeyError:
-            raise ValueError(f'Unknown color: {text_color}')
-
-    def draw(self, surface):
-        color = self.hover_color if self.is_hovered else self.color
-        pygame.draw.rect(surface, color, self.rect, border_radius=5)
-        pygame.draw.rect(surface, self.border_color, self.rect, 2, border_radius=5)
-
-        text_surface = self.font.render(self.text, True, self.text_color)
-        text_rect = text_surface.get_rect(center=self.rect.center)
-        surface.blit(text_surface, text_rect)
+from utils import *
+from generator.generator import Choice
 
 
 class Choices:
     def __init__(
-            self, screen: pygame.Surface,
-            text_area_height: int, font: pygame.font.Font,
-            height_interval: int = 10, borders_interval: int = 10, right_interval: int = 100
+            self, font: pygame.font.Font, buttons_surface: BasicSurface
     ):
-        self.screen = screen
-        self.screen_width = screen.get_width()
-        self.screen_height = screen.get_height()
-
-        self.text_area_height = text_area_height
         self.font = font
-        self.height_interval = height_interval
-        self.borders_interval = borders_interval
-        self.right_interval = right_interval
-        self.height_size = self.font.get_height() + borders_interval * 2
-        self.buttons: list[AnswerButton] = []
+        self.buttons_surface = buttons_surface
+        self.buttons = ButtonsList(
+            area=buttons_surface,
+            font=font
+        )
 
-    def update_buttons(self, buttons: list[dict], text_centered: bool):
-        self.buttons = []
-        if len(buttons) == 0:
-            return
-        captions = list(map(lambda b: b.get('caption', ''), buttons))
-        max_width = max(map(lambda c: self.font.size(c)[0], captions)) + 5
-        if text_centered:
-            start_x = self.screen_width // 2 - (max_width // 2)
-            start_y = self.screen_height // 2 + self.text_area_height // 2
-        else:
-            start_x = self.screen_width - max_width - self.right_interval
-            start_y = (self.screen_height - self.text_area_height) // 2 - (
-                    len(buttons) * (self.height_size + self.height_interval) // 2)
-        for i in range(len(buttons)):
-            caption = buttons[i].get('caption', '')
-            if not buttons[i].get('done', False):
-                self.buttons.append(
-                    AnswerButton(
-                        text=caption,
-                        x=start_x,
-                        y=start_y,
-                        width=max_width + self.borders_interval * 2,
-                        height=self.height_size,
-                        index=i,
-                        font=self.font
-                    )
-                )
-                start_y += self.height_size + self.height_interval
+    def update_buttons(self, choices: list[Choice]):
+        buttons = []
+        for i in range(len(choices)):
+            buttons.append((choices[i].caption, str(i)))
+        self.buttons.update_buttons(buttons=buttons)
 
-    def draw_current_buttons(self):
-        for button in self.buttons:
-            button.draw(surface=self.screen)
+    def draw_current_buttons(self, dest: pygame.Surface):
+        draw_surface(source=self.buttons_surface, dest=dest)
 
     def check_hover(self, mouse_position: tuple[int, int]):
-        for button in self.buttons:
-            button.check_hover(mouse_position=mouse_position)
+        self.buttons.check_hovers(*mouse_position)
 
-    def is_button_clicked(self, mouse_position: tuple[int, int]) -> int | None:
-        for button in self.buttons:
-            if button.is_clicked(mouse_position=mouse_position):
-                return button.index
-        return None
+
 
 
 
