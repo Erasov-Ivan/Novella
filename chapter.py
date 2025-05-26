@@ -25,6 +25,7 @@ class Chapter:
             raise ValueError("No start point")
         self.current_text: GameText = None
         self.repeat = 0
+
         y = int((self.screen.get_height() + self.screen.get_height() * self.text_overlay_height_mul) // 2)
         self.choice_surface = BasicSurface(
             x=0, y=y, width=self.screen.get_width(), height=self.screen.get_height() - y - 50,
@@ -105,6 +106,7 @@ class Chapter:
     def draw(self):
         self.background.draw()
         self.current_text.draw()
+        draw_surface(source=self.choice_surface, dest=self.screen)
         self.choices.draw(dest=self.screen)
 
 '''
