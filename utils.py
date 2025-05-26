@@ -340,6 +340,37 @@ class InputBox(Button):
             )
 
 
+class StatsShower:
+    def __init__(self, screen: pygame.Surface, font: pygame.font, text_overlay_height_mul: float):
+        self.screen = screen
+        self.font = font
+        self.x = self.screen.get_width() - self.screen.get_width() // 5
+        self.y = self.screen.get_height() - int(self.screen.get_height() * text_overlay_height_mul) - self.screen.get_height() // 10
+        self.width = self.screen.get_width() // 5
+        self.height = self.screen.get_height() // 10
+        self.surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
+        self.text: GameText = None
+        self.start_time = 0
+
+    def show(self, text: str):
+        self.text = GameText(
+            words=text, character=None, title=None, font=self.font, screen=self.surface, centered=True,
+            background_size_mul=1
+        )
+        self.start_time = time.time()
+
+    def draw(self):
+        if self.text is not None:
+            self.surface.fill(Color(0, 0, 0, 0))
+            self.text.draw()
+            self.screen.blit(
+                source=self.surface,
+                dest=(self.x, self.y)
+            )
+            if time.time() - self.start_time > 2:
+                self.text = None
+
+
 def draw_surface(source: BasicSurface, dest: pygame.Surface):
     source.fill()
     for child in source.children:

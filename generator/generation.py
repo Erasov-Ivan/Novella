@@ -15,9 +15,38 @@ generator.labels['test'] = Label(
             question=Question(
                 question='Мельник пошел на мельницу и увидел в каждом углу по 3 кошки. Сколько ног на мельнице?',
                 answer='50',
-                right_label='',
-                wrong_label=''
+                right_label='fuss_right_answer',
+                wrong_label='fuss_wrong_answer'
             )
+        )
+    ]
+)
+generator.labels['fuss_right_answer'] = Label(
+    texts=[
+        Text(
+            character=PERSON_FUSS,
+            words='Отлично! Я так и знал что вы отгадаете.'
+        ),
+        Text(
+            character=PERSON_FUSS,
+            words='Первая часть пароля: “Именно математика дает…”'
+        )
+    ]
+)
+
+generator.labels['fuss_wrong_answer'] = Label(
+    texts=[
+        Text(
+            character=PERSON_FUSS,
+            words='Хмм.. Так и быть, я дам вам первую часть пароля'
+        ),
+        Text(
+            character=PERSON_FUSS,
+            words='Но учтите, это только потому что я очень хочу помочь вам'
+        ),
+        Text(
+            character=PERSON_FUSS,
+            words='Запоминайте: “Именно математика дает…”'
         )
     ]
 )

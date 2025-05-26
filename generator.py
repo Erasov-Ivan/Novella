@@ -79,20 +79,24 @@ class Question:
             question: str,
             answer: str,
             right_label: str,
-            wrong_label: str
+            wrong_label: str,
+            stats: dict | None = None
     ):
         self.answer = answer
         self.question = question
         self.right_label = right_label
         self.wrong_label = wrong_label
+        self.stats = stats
 
     def __dict__(self):
-        return {
+        result = {
             QUESTION: self.question,
             ANSWER: self.answer,
             RIGHT_LABEL: self.right_label,
             WRONG_LABEL: self.wrong_label
         }
+        if self.stats is not None: result[STATS] = self.stats
+        return result
 
 
 class Choice:
@@ -258,7 +262,8 @@ class ChapterGenerator:
                         question=question_raw.get(QUESTION),
                         answer=question_raw.get(ANSWER),
                         right_label=question_raw.get(RIGHT_LABEL),
-                        wrong_label=question_raw.get(WRONG_LABEL)
+                        wrong_label=question_raw.get(WRONG_LABEL),
+                        stats=question_raw.get(STATS, None)
                     )
                 else:
                     question = None

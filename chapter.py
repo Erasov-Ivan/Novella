@@ -32,6 +32,9 @@ class Chapter:
         self.repeat = 0
 
         self.choices: Choices = None
+        self.stats_shower = StatsShower(
+            screen=self.screen, font=self.font, text_overlay_height_mul=self.text_overlay_height_mul
+        )
 
     def start(self):
         self.update_dairy()
@@ -48,6 +51,8 @@ class Chapter:
             res = form.start()
             if res:
                 self.current_position = self.chapter.labels.get(q.right_label)
+                if (stats := q.stats) is not None:
+                    self.update_stats(stats=stats)
             else:
                 self.current_position = self.chapter.labels.get(q.wrong_label)
             if self.current_position is not None:
@@ -126,6 +131,7 @@ class Chapter:
         self.current_text.draw()
         if self.choices is not None:
             self.choices.draw(dest=self.screen)
+        self.stats_shower.draw()
 
     def process_button_click(self, mouse_position: tuple[int, int]):
         if self.choices is not None:
@@ -138,12 +144,7 @@ class Chapter:
                 self.dairy.update(plot=choice.plot, tasks=choice.tasks, theory=choice.theory)
 
                 if (stats := choice.stats) is not None:
-                    for key, value in stats.items():
-                        if key not in self.stats.keys():
-                            self.stats[key] = value
-                        else:
-                            self.stats[key] += value
-                        #self.update_current_text(text=f'{key}: {f"+{value}" if value >= 0 else value}', centered=True)
+                    self.update_stats(stats=stats)
 
                 if choice.words is not None:
                     self.current_text = GameText(
@@ -174,4 +175,12 @@ class Chapter:
                 tasks = texts[self.current_text_position].tasks
                 theory = texts[self.current_text_position].theory
                 self.dairy.update(plot=plot, tasks=tasks, theory=theory)
+
+    def update_stats(self, stats: dict):
+        for key, value in stats.items():
+            self.stats_shower.show(text=f'{key}: {f"+{value}" if value >= 0 else value}')
+            if key not in self.stats.keys():
+                self.stats[key] = value
+            else:
+                self.stats[key] += value
 
