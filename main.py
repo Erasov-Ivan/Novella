@@ -1,0 +1,42 @@
+import pygame
+from chapter import Chapter
+
+pygame.init()
+
+SCREEN_WIDTH = 1600
+SCREEN_HEIGHT = 900
+FPS = 60
+
+FONT = pygame.font.SysFont('Arial', 24)
+screen = pygame.display.set_mode(size=(SCREEN_WIDTH, SCREEN_HEIGHT))
+pygame.display.set_caption("Курсач")
+clock = pygame.time.Clock()
+
+
+chapter = Chapter(
+    screen=screen,
+    font=FONT,
+    path='chapters/chapter_1'
+)
+
+chapter.start()
+running = True
+while running:
+    mouse_position = pygame.mouse.get_pos()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            chapter.next()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                #chapter.process_button_click(mouse_position=mouse_position)
+                pass
+
+    chapter.draw()
+    pygame.display.flip()
+
+    clock.tick(FPS)
+
+pygame.quit()
+

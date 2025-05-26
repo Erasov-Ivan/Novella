@@ -12,7 +12,7 @@ BASIC_TEXT_OVERLAY_COLOR = (0, 0, 0, 200)
 
 
 class BasicSurface:
-    def __init__(self, x: int, y: int, width: int, height: int, fill_color: Color):
+    def __init__(self, x: int, y: int, width: int, height: int, fill_color: Color = Color(0, 0, 0, 0)):
         self.x = x
         self.y = y
         self.width = width
@@ -98,7 +98,7 @@ class GameText:
         if centered:
             y = (screen.get_height() - overlay_height) // 2
         else:
-            y = screen.get_height() - overlay_height,
+            y = screen.get_height() - overlay_height
         self.overlay = BasicSurface(
             x=0,
             y=y,
@@ -206,7 +206,7 @@ class ButtonsList(Block):
             y=area.y,
             width=area.width,
             height=area.height,
-            fill_color=Color(0, 0, 0, 0),
+            fill_color=area.fill_color,
             parent=area
         )
         self.font = font

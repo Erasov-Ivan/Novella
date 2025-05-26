@@ -1,5 +1,5 @@
 from utils import *
-from generator.generator import Choice
+from generator import Choice
 
 
 class Choices:
@@ -12,6 +12,7 @@ class Choices:
             area=buttons_surface,
             font=font
         )
+        self.buttons_surface.children.append(self.buttons)
 
     def update_buttons(self, choices: list[Choice]):
         buttons = []
@@ -19,7 +20,7 @@ class Choices:
             buttons.append((choices[i].caption, str(i)))
         self.buttons.update_buttons(buttons=buttons)
 
-    def draw_current_buttons(self, dest: pygame.Surface):
+    def draw(self, dest: pygame.Surface):
         draw_surface(source=self.buttons_surface, dest=dest)
 
     def check_hover(self, mouse_position: tuple[int, int]):

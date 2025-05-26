@@ -1,44 +1,37 @@
 import pygame
 import time
+from drawer import Drawer
 from choices import Choices
-from generator import ChapterGenerator
-from utils import *
+from dairy import Dairy
 
 
 class Chapter:
     def __init__(
-            self, screen: pygame.Surface, font: pygame.font.Font, path: str, stats: dict = {},
-            text_overlay_height_mul: float = 1/6
+            self, drawer: Drawer, choices: Choices, chapter: dict, dairy: Dairy,
+            path: str, stats: dict = {}
     ):
+        self.drawer = drawer
+        self.choices = choices
+        self.dairy = dairy
+        self.chapter = chapter
         self.stats = stats
         self.path = path
-        self.chapter = ChapterGenerator()
-        self.chapter.load(f'{self.path}/chapter.json')
-        self.background = Background(screen=screen)
-        self.screen = screen
-        self.font = font
-        self.text_overlay_height_mul = text_overlay_height_mul
 
-        self.current_position = self.chapter.labels.get('start', None)
+        self.current_position = self.chapter.get('start', None)
         self.current_text_position = 0
         if self.current_position is None:
             raise ValueError("No start point")
-        self.current_text: GameText = None
+
         self.repeat = 0
-        y = int((self.screen.get_height() + self.screen.get_height() * self.text_overlay_height_mul) // 2)
-        self.choice_surface = BasicSurface(
-            x=0, y=y, width=self.screen.get_width(), height=self.screen.get_height() - y - 50,
-        )
-        self.choices = Choices(font=self.font, buttons_surface=self.choice_surface)
 
     def start(self):
-        #self.update_dairy()
+        self.update_dairy()
         self.update_current_text()
         self.update_current_background()
-        self.update_current_choices()
+        self.drawer.show_current_text_appearance_animation()
 
     def next(self):
-        if len(self.choices.buttons.children) > 0:
+        if len(self.choices.buttons) > 0:
             return
 
         if self.repeat > 0:
@@ -46,68 +39,74 @@ class Chapter:
             self.update_current_position()
             return
 
-        texts = self.current_position.texts
+        texts = self.current_position.get('texts')
         if texts is not None:
             self.current_text_position += 1
             if self.current_text_position < len(texts):
-                #self.update_dairy()
+                self.update_dairy()
                 self.update_current_text()
+                self.drawer.show_current_text_appearance_animation()
                 self.update_current_choices()
+                self.choices.draw_current_buttons()
                 return
-        if (next_key := self.current_position.next) is not None:
-            #self.update_dairy()
+        if (next_key := self.current_position.get('next')) is not None:
+            self.update_dairy()
             self.current_text_position = 0
-            self.current_position = self.chapter.labels.get(next_key)
+            self.current_position = self.chapter.get(next_key)
             self.update_current_position()
         else:
             return
 
     def update_current_text(self):
-        texts = self.current_position.texts
+        texts = self.current_position.get('texts')
         if texts is None:
             return
         else:
             if len(texts) <= self.current_text_position:
                 return
             else:
-                text = texts[self.current_text_position]
-                self.current_text = GameText(
-                    words=text.words,
-                    character=text.character,
-                    title=text.title,
-                    delay=text.delay,
-                    centered=text.centered,
-                    font=self.font,
-                    screen=self.screen,
-                    background_size_mul=self.text_overlay_height_mul
+                self.drawer.update_current_text(
+                    words=texts[self.current_text_position].get('words', ''),
+                    character=texts[self.current_text_position].get('character', None),
+                    title=texts[self.current_text_position].get('title', None),
+                    centered=texts[self.current_text_position].get('centered', False),
+                    delay=texts[self.current_text_position].get('delay', None)
                 )
 
     def update_current_background(self):
-        background = self.current_position.background
+        background = self.current_position.get('background', None)
         if background is not None:
-            image = background.image
+            image = background.get('image', None)
             if image is not None:
-                self.background.update(image=f'{self.path}/{image}')
+                self.drawer.update_current_background(image=f'{self.path}/{image}')
             else:
-                self.background.update(color=background.color)
+                self.drawer.update_current_background(color=background.get('color', None))
 
     def update_current_choices(self):
-        if self.current_position.texts[self.current_text_position].choices is not None:
-            self.choices.update_buttons(choices=self.current_position.texts[self.current_text_position].choices)
+        texts = self.current_position.get('texts')
+        if texts is not None:
+            if self.current_text_position < len(texts):
+                choices = texts[self.current_text_position].get('choices', [])
+                centered = texts[self.current_text_position].get('centered', False)
+                self.choices.update_buttons(
+                    buttons=choices,
+                    text_centered=centered
+                )
 
     def update_current_position(self):
         if self.current_position is not None:
             self.update_current_background()
             self.update_current_text()
+            self.drawer.show_current_text_appearance_animation()
             self.update_current_choices()
-            #self.choices.draw_current_buttons()
+            self.choices.draw_current_buttons()
 
-    def draw(self):
-        self.background.draw()
-        self.current_text.draw()
-        self.choices.draw(dest=self.screen)
+    def show_current_state(self):
+        self.drawer.draw_current_background()
+        self.drawer.show_current_text()
+        self.choices.draw_current_buttons()
+        self.dairy.draw_button()
 
-'''
     def process_button_click(self, mouse_position: tuple[int, int]):
         index = self.choices.is_button_clicked(mouse_position=mouse_position)
         if index is not None:
@@ -161,4 +160,4 @@ class Chapter:
                 tasks = texts[self.current_text_position].get('tasks', {})
                 theory = texts[self.current_text_position].get('theory', {})
                 self.dairy.update(plot=plot, tasks=tasks, theory=theory)
-'''
+
