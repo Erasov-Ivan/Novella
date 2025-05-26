@@ -15,12 +15,6 @@ pygame.display.set_caption("Курсач")
 clock = pygame.time.Clock()
 
 
-chapter = Chapter(
-    screen=screen,
-    font=FONT,
-    path='chapters/chapter_1'
-)
-
 dairy = Dairy(
     screen=screen,
     font=FONT
@@ -35,6 +29,13 @@ dairy.update(
     )
 )
 
+chapter = Chapter(
+    screen=screen,
+    font=FONT,
+    path='chapters/chapter_1',
+    dairy=dairy
+)
+
 chapter.start()
 running = True
 while running:
@@ -47,16 +48,15 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 chapter.process_button_click(mouse_position=mouse_position)
-                if dairy.dairy_button.is_hovered(*mouse_position):
-                    dairy.open_dairy()
 
     if chapter.choices is not None:
         chapter.choices.check_hover(mouse_position=mouse_position)
     chapter.draw()
+
     dairy.dairy_button.check_hover(*mouse_position)
     dairy.draw_button()
-    pygame.display.flip()
 
+    pygame.display.flip()
     clock.tick(FPS)
 
 pygame.quit()

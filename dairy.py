@@ -91,16 +91,22 @@ class Dairy:
             self.data_surface.children.append(block)
             current_y = current_y + self.font.get_height() + 5
 
+    def draw_plot(self):
+        self.data_surface.children = []
+
+    def draw_theory(self):
+        self.data_surface.children = []
+
     def draw_data(self):
         for title in self.titles_surface.children:
             if title.hovered:
                 match title.callback:
                     case 'plot':
-                        pass
+                        self.draw_plot()
                     case 'tasks':
                         self.draw_current_tasks()
                     case 'theory':
-                        pass
+                        self.draw_theory()
 
     def open_dairy(self):
         running = True

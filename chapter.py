@@ -1,16 +1,20 @@
 import pygame
 import time
 from choices import Choices
+from dairy import Dairy
 from generator import ChapterGenerator
 from utils import *
 
 
 class Chapter:
     def __init__(
-            self, screen: pygame.Surface, font: pygame.font.Font, path: str, stats: dict = {},
+            self, screen: pygame.Surface, font: pygame.font.Font, path: str,
+            dairy: Dairy,
+            stats: dict = {},
             text_overlay_height_mul: float = 1/6
     ):
         self.stats = stats
+        self.dairy = dairy
         self.path = path
         self.chapter = ChapterGenerator()
         self.chapter.load(f'{self.path}/chapter.json')
@@ -29,7 +33,7 @@ class Chapter:
         self.choices: Choices = None
 
     def start(self):
-        #self.update_dairy()
+        self.update_dairy()
         self.update_current_text()
         self.update_current_background()
         self.update_current_choices()
@@ -47,12 +51,12 @@ class Chapter:
         if texts is not None:
             self.current_text_position += 1
             if self.current_text_position < len(texts):
-                #self.update_dairy()
+                self.update_dairy()
                 self.update_current_text()
                 self.update_current_choices()
                 return
         if (next_key := self.current_position.next) is not None:
-            #self.update_dairy()
+            self.update_dairy()
             self.current_text_position = 0
             self.current_position = self.chapter.labels.get(next_key)
             self.update_current_position()
@@ -102,7 +106,6 @@ class Chapter:
             self.update_current_background()
             self.update_current_text()
             self.update_current_choices()
-            #self.choices.draw_current_buttons()
 
     def draw(self):
         self.background.draw()
@@ -118,7 +121,7 @@ class Chapter:
                 self.choices = None
                 self.current_position.texts[self.current_text_position].choices[index].done = True
                 choice = self.current_position.texts[self.current_text_position].choices[index]
-                #self.dairy.update(plot=choice.plot, tasks=choice.tasks, theory=choice.theory)
+                self.dairy.update(plot=choice.plot, tasks=choice.tasks, theory=choice.theory)
 
                 if (stats := choice.stats) is not None:
                     for key, value in stats.items():
@@ -146,16 +149,15 @@ class Chapter:
                     if self.current_position is not None:
                         self.update_current_position()
         else:
-            pass
-            #if self.dairy.dairy_button.is_clicked(mouse_position=mouse_position):
-            #    self.dairy.open_dairy()
+            if self.dairy.dairy_button.is_hovered(*mouse_position):
+                self.dairy.open_dairy()
 
     def update_dairy(self):
-        texts = self.current_position.get('texts')
+        texts = self.current_position.texts
         if texts is not None:
             if self.current_text_position < len(texts):
-                plot = texts[self.current_text_position].get('plot', {})
-                tasks = texts[self.current_text_position].get('tasks', {})
-                theory = texts[self.current_text_position].get('theory', {})
+                plot = texts[self.current_text_position].plot
+                tasks = texts[self.current_text_position].tasks
+                theory = texts[self.current_text_position].theory
                 self.dairy.update(plot=plot, tasks=tasks, theory=theory)
 
