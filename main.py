@@ -35,7 +35,8 @@ chapter = Chapter(
     path='chapters/chapter_1',
     dairy=dairy
 )
-
+from question import Question
+q = Question(screen=screen, font=FONT, question='Мельник пошел на мельницу и увидел в каждом углу по 3 кошки. Сколько ног на мельнице?', answer='')
 chapter.start()
 running = True
 while running:
@@ -55,7 +56,7 @@ while running:
 
     dairy.dairy_button.check_hover(*mouse_position)
     dairy.draw_button()
-
+    q.start()
     pygame.display.flip()
     clock.tick(FPS)
 

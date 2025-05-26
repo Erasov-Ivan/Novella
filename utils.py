@@ -165,11 +165,11 @@ class Button(Block):
             text: str, callback: str, font: pygame.font.Font,
             fill_color: Color = BASIC_BUTTON_COLOR, hover_color: Color = BASIC_BUTTON_HOVER_COLOR,
             text_color: Color = BASIC_BUTTON_TEXT_COLOR, border_color: Color = BASIC_BUTTON_BORDER_COLOR,
-            border_size: int = 2
+            border_size: int = 2, text_position: str = 'center'
     ):
         super().__init__(x=x, y=y, width=width, height=height, fill_color=fill_color, parent=parent)
         self.parent = parent
-        self.text = BasicText(text=text, font=font, text_color=text_color)
+        self.text = BasicText(text=text, font=font, text_color=text_color, position=text_position)
         self.hover_color = hover_color
         self.hovered = False
         self.callback = callback
@@ -289,6 +289,55 @@ class Background:
             self.screen.fill(self.default)
         else:
             self.screen.fill(color)
+
+
+class InputBox(Button):
+    def __init__(
+            self, x: int, y: int, width: int, height: int, parent: BasicSurface | None,
+            font: pygame.font.Font, text_color: Color = BASIC_TEXT_COLOR,
+            fill_color: Color = BASIC_BUTTON_COLOR, active_color: Color = BASIC_BUTTON_HOVER_COLOR, text: str = '',
+    ):
+        super().__init__(
+            x=x, y=y, width=width, height=height, fill_color=fill_color, parent=parent,
+            font=font, text_color=text_color, hover_color=fill_color, text=text, callback='',
+            text_position='left'
+        )
+        self.active_color = active_color
+        self.inactive_color = fill_color
+        self.active = False
+        self.cursor_visible = True
+        self.cursor_timer = 0
+
+    def handle_event(self, event):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            self.active = self.is_hovered(*event.pos)
+            self.fill_color = self.active_color if self.active else self.inactive_color
+
+        if event.type == pygame.KEYDOWN and self.active:
+            if event.key == pygame.K_RETURN:
+                #print("3 Пользователь ввел:", self.text)
+                return True
+            elif event.key == pygame.K_BACKSPACE:
+                self.text.text = self.text.text[:-1]
+            else:
+                self.text.text += event.unicode
+
+    def update(self):
+        self.cursor_timer += 1
+        if self.cursor_timer > 30:
+            self.cursor_visible = not self.cursor_visible
+            self.cursor_timer = 0
+
+    def draw(self, dest: pygame.Surface):
+        super().draw(dest=dest)
+        if self.active and self.cursor_visible:
+            cursor_x = self.x + self.text.font.size(self.text.text)[0]
+            pygame.draw.line(
+                dest, self.text.text_color,
+                (cursor_x, self.y + 5),
+                (cursor_x, self.y + self.height - 5),
+                2
+            )
 
 
 def draw_surface(source: BasicSurface, dest: pygame.Surface):
