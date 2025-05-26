@@ -41,12 +41,13 @@ class Block(BasicSurface):
         self.parent = parent
 
     def is_hovered(self, mouse_x, mouse_y) -> bool:
-        mouse_x = mouse_x - self.parent.x
-        mouse_y = mouse_y - self.parent.y
-        parent = self.parent
-        while (parent := parent.parent) is not None:
-            mouse_x = mouse_x - parent.x
-            mouse_y = mouse_y - parent.y
+        if self.parent is not None:
+            mouse_x = mouse_x - self.parent.x
+            mouse_y = mouse_y - self.parent.y
+            parent = self.parent
+            while (parent := parent.parent) is not None:
+                mouse_x = mouse_x - parent.x
+                mouse_y = mouse_y - parent.y
         return self.x <= mouse_x <= self.x + self.width and self.y <= mouse_y <= self.y + self.height
 
 
@@ -54,19 +55,24 @@ class BasicText(Block):
     def __init__(
             self, text: str, font: pygame.font.Font,  text_color: Color = BASIC_TEXT_COLOR,
             background_color: Color = Color(0, 0, 0, 0),
-            x: int = 0, y: int = 0, width: int = 0, height: int = 0, parent: BasicSurface | None = None
+            x: int = 0, y: int = 0, width: int = 0, height: int = 0, parent: BasicSurface | None = None,
+            position: str = 'center'
     ):
         super().__init__(x=x, y=y, width=width, height=height, parent=parent, fill_color=background_color)
         self.text = text
         self.text_color = text_color
         self.font = font
         self.start_offset_from_middle = self.font.size(self.text[:(len(self.text) + 1) // 2])[0]
+        self.position = position
 
     def draw(self, dest: pygame.Surface):
         text = self.font.render(self.text, True, self.text_color)
-        text_rect = text.get_rect(
-            midleft=(dest.get_width() / 2 - self.start_offset_from_middle, dest.get_height() / 2)
-        )
+        if self.position == 'left':
+            text_rect = text.get_rect(midleft=(0, dest.get_height() / 2))
+        else:
+            text_rect = text.get_rect(
+                midleft=(dest.get_width() / 2 - self.start_offset_from_middle, dest.get_height() / 2)
+            )
         dest.blit(
             source=text,
             dest=text_rect

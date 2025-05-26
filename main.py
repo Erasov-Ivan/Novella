@@ -1,5 +1,7 @@
 import pygame
 from chapter import Chapter
+from dairy import Dairy
+from generator import Tasks
 
 pygame.init()
 
@@ -19,6 +21,20 @@ chapter = Chapter(
     path='chapters/chapter_1'
 )
 
+dairy = Dairy(
+    screen=screen,
+    font=FONT
+)
+dairy.update(
+    tasks=Tasks(
+        add={
+            '1': 'task 1',
+            '2': 'task 2',
+            '3': 'very very very long task number three'
+        }
+    )
+)
+
 chapter.start()
 running = True
 while running:
@@ -31,11 +47,14 @@ while running:
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 chapter.process_button_click(mouse_position=mouse_position)
-                pass
+                if dairy.dairy_button.is_hovered(*mouse_position):
+                    dairy.open_dairy()
 
     if chapter.choices is not None:
         chapter.choices.check_hover(mouse_position=mouse_position)
     chapter.draw()
+    dairy.dairy_button.check_hover(*mouse_position)
+    dairy.draw_button()
     pygame.display.flip()
 
     clock.tick(FPS)

@@ -26,7 +26,7 @@ class Chapter:
         self.current_text: GameText = None
         self.repeat = 0
 
-        self.choices = None
+        self.choices: Choices = None
 
     def start(self):
         #self.update_dairy()
