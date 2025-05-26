@@ -9,17 +9,18 @@ class Question:
         self.screen_height = screen.get_height()
         self.font = font
         self.question = question
-        self.answer = answer
+        self.answer = answer.replace(' ', '')
 
+        text_width = self.font.size(self.question)[0]
         self.surface = BasicSurface(
-            x=self.screen_width // 6,
+            x=(self.screen_width - text_width) // 2 - 20,
             y=self.screen_height // 4,
-            width=self.screen_width // 6 * 4,
+            width=text_width + 20,
             height=self.screen_height // 2,
             fill_color=Color('grey')
         )
         self.label = Button(
-            x=0,
+            x=10,
             y=self.surface.height // 7,
             width=self.surface.width,
             height=self.surface.height // 7,
@@ -28,7 +29,8 @@ class Question:
             text=self.question,
             font=self.font,
             parent=self.surface,
-            callback=''
+            callback='',
+            text_position='left'
         )
         self.surface.children.append(self.label)
 
@@ -58,7 +60,7 @@ class Question:
     def draw(self):
         draw_surface(source=self.surface, dest=self.screen)
 
-    def start(self):
+    def start(self) -> bool:
         clock = pygame.time.Clock()
         running = True
         while running:
@@ -68,18 +70,15 @@ class Question:
                     running = False
 
                 if self.input_box.handle_event(event):
-                    print("1 Отправлен ответ:", self.input_box.text.text)
+                    return self.input_box.text.text.replace(' ', '') == self.answer
 
-               #if event.type == pygame.MOUSEBUTTONDOWN:
-               #     if submit_button.collidepoint(event.pos):
-               #         print("2 Отправлен ответ (кнопка):", input_box.text)
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if self.submit_button.is_hovered(*event.pos):
+                        return self.input_box.text.text.replace(' ', '') == self.answer
 
             self.submit_button.check_hover(*mouse_position)
             self.input_box.update()
             self.draw()
-
-            #pygame.draw.rect(screen, LIGHT_BLUE, submit_button)
-            #self.screen.blit(button_text, (submit_button.x + 50, submit_button.y + 10))
 
             pygame.display.flip()
             clock.tick(60)
