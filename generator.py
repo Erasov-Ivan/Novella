@@ -10,6 +10,10 @@ CENTERED = 'centered'
 TITLE = 'title'
 DELAY = 'delay'
 CHOICES = 'choices'
+QUESTION = 'question'
+ANSWER = 'answer'
+RIGHT_LABEL = 'right_label'
+WRONG_LABEL = 'wrong_label'
 CAPTION = 'caption'
 LABEL = 'label'
 REPEAT = 'repeat'
@@ -69,6 +73,28 @@ class Theory:
         return {}
 
 
+class Question:
+    def __init__(
+            self,
+            question: str,
+            answer: str,
+            right_label: str,
+            wrong_label: str
+    ):
+        self.answer = answer
+        self.question = question
+        self.right_label = right_label
+        self.wrong_label = wrong_label
+
+    def __dict__(self):
+        return {
+            QUESTION: self.question,
+            ANSWER: self.answer,
+            RIGHT_LABEL: self.right_label,
+            WRONG_LABEL: self.wrong_label
+        }
+
+
 class Choice:
     def __init__(
             self,
@@ -125,6 +151,7 @@ class Text:
             centered: bool | None = None,
             delay: float | None = None,
             choices: list[Choice] | None = None,
+            question: Question | None = None,
             tasks: Tasks | None = None,
             plot: Plot | None = None,
             theory: Theory | None = None
@@ -135,6 +162,7 @@ class Text:
         self.centered = centered
         self.delay = delay
         self.choices = choices
+        self.question = question
         self.tasks = tasks
         self.plot = plot
         self.theory = theory
@@ -146,6 +174,7 @@ class Text:
         if self.centered is not None: result[CENTERED] = self.centered
         if self.delay is not None: result[DELAY] = self.delay
         if self.choices is not None: result[CHOICES] = list(map(lambda choice: choice.__dict__(), self.choices))
+        if self.question is not None: result[QUESTION] = self.question.__dict__()
         if self.tasks is not None: result[TASKS] = self.tasks.__dict__()
         if self.plot is not None: result[PLOT] = self.plot.__dict__()
         if self.theory is not None: result[THEORY] = self.theory.__dict__()
@@ -223,6 +252,16 @@ class ChapterGenerator:
             texts_raw: list[dict] = label_value.get(TEXTS, [])
             texts = []
             for t in texts_raw:
+                question_raw: dict = t.get(QUESTION, {})
+                if question_raw != {}:
+                    question = Question(
+                        question=question_raw.get(QUESTION),
+                        answer=question_raw.get(ANSWER),
+                        right_label=question_raw.get(RIGHT_LABEL),
+                        wrong_label=question_raw.get(WRONG_LABEL)
+                    )
+                else:
+                    question = None
                 choices_raw = t.get(CHOICES, [])
                 if len(choices_raw) == 0:
                     choices = None
@@ -287,6 +326,7 @@ class ChapterGenerator:
                     centered=t.get(CENTERED, None),
                     delay=t.get(DELAY, None),
                     choices=choices,
+                    question=question,
                     tasks=tasks,
                     plot=plot,
                     theory=theory

@@ -2,7 +2,7 @@ import pygame
 from utils import *
 
 
-class Question:
+class Form:
     def __init__(self, screen: pygame.Surface, font: pygame.font.Font, question: str, answer: str):
         self.screen = screen
         self.screen_width = screen.get_width()

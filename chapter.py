@@ -3,6 +3,7 @@ import time
 from choices import Choices
 from dairy import Dairy
 from generator import ChapterGenerator
+from question import Form
 from utils import *
 
 
@@ -42,6 +43,19 @@ class Chapter:
         if self.choices is not None and len(self.choices.buttons.children) > 0:
             return
 
+        if (q := self.current_position.texts[self.current_text_position].question) is not None:
+            form = Form(screen=self.screen, font=self.font, question=q.question, answer=q.answer)
+            res = form.start()
+            if res:
+                self.current_position = self.chapter.labels.get(q.right_label)
+            else:
+                self.current_position = self.chapter.labels.get(q.wrong_label)
+            if self.current_position is not None:
+                self.current_text_position = 0
+                self.update_dairy()
+                self.update_current_position()
+                return
+
         if self.repeat > 0:
             self.repeat -= 1
             self.update_current_position()
@@ -56,9 +70,9 @@ class Chapter:
                 self.update_current_choices()
                 return
         if (next_key := self.current_position.next) is not None:
-            self.update_dairy()
             self.current_text_position = 0
             self.current_position = self.chapter.labels.get(next_key)
+            self.update_dairy()
             self.update_current_position()
         else:
             return
