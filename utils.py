@@ -3,8 +3,8 @@ from pygame.color import Color
 import re
 import time
 
-BASIC_BUTTON_COLOR = Color('grey20')
-BASIC_BUTTON_HOVER_COLOR = Color('grey40')
+BASIC_BUTTON_COLOR = Color('grey40')
+BASIC_BUTTON_HOVER_COLOR = Color('grey60')
 BASIC_BUTTON_TEXT_COLOR = Color('black')
 BASIC_BUTTON_BORDER_COLOR = Color('black')
 BASIC_TEXT_COLOR = Color('white')
@@ -173,6 +173,7 @@ class Button(Block):
             fill_color=border_color
         )
         self.boarder.fill()
+        self.fill()
 
     def draw(self, dest: pygame.Surface):
         self.boarder.draw(dest=dest)
@@ -202,8 +203,8 @@ class ButtonsList(Block):
             border_color: Color = BASIC_BUTTON_BORDER_COLOR, border_size: int = 2
     ):
         super().__init__(
-            x=area.x,
-            y=area.y,
+            x=0,
+            y=0,
             width=area.width,
             height=area.height,
             fill_color=area.fill_color,
@@ -220,9 +221,12 @@ class ButtonsList(Block):
     def update_buttons(self, buttons: list[tuple[str, str]]):
         """buttons: list[(caption, callback)]"""
         self.children = []
+        if len(buttons) == 0:
+            return
         button_height = (self.height - self.height_interval * (len(buttons) - 1)) // len(buttons)
         for i in range(len(buttons)):
             caption, callback = buttons[i]
+            print(0, (button_height + self.height_interval) * i, self.width, button_height)
             self.children.append(
                 Button(
                     x=0,

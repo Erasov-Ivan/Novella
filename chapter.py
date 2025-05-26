@@ -27,10 +27,13 @@ class Chapter:
         self.repeat = 0
 
         y = int((self.screen.get_height() + self.screen.get_height() * self.text_overlay_height_mul) // 2)
-        self.choice_surface = BasicSurface(
-            x=0, y=y, width=self.screen.get_width(), height=self.screen.get_height() - y - 50,
+        self.choices = Choices(
+            font=self.font,
+            x=self.screen.get_width() // 3,
+            y=y,
+            width=self.screen.get_width() // 3,
+            height=self.screen.get_height() - y - 50
         )
-        self.choices = Choices(font=self.font, buttons_surface=self.choice_surface)
 
     def start(self):
         #self.update_dairy()
@@ -106,54 +109,46 @@ class Chapter:
     def draw(self):
         self.background.draw()
         self.current_text.draw()
-        draw_surface(source=self.choice_surface, dest=self.screen)
         self.choices.draw(dest=self.screen)
 
-'''
     def process_button_click(self, mouse_position: tuple[int, int]):
-        index = self.choices.is_button_clicked(mouse_position=mouse_position)
-        if index is not None:
-            self.choices.buttons = []
-            result = self.current_position['texts'][self.current_text_position]['choices'][index]
-            self.current_position['texts'][self.current_text_position]['choices'][index]['done'] = True
+        callback = self.choices.check_mouse_click(mouse_position=mouse_position)
+        if callback is not None:
+            index = int(callback)
+            self.choices.update_buttons([])
+            self.current_position.texts[self.current_text_position].choices[index].done = True
+            choice = self.current_position.texts[self.current_text_position].choices[index]
+            #self.dairy.update(plot=choice.plot, tasks=choice.tasks, theory=choice.theory)
 
-            plot = result.get('plot', {})
-            tasks = result.get('tasks', {})
-            theory = result.get('theory', {})
-            self.dairy.update(plot=plot, tasks=tasks, theory=theory)
-
-            if (stats := result.get('stats', None)) is not None:
+            if (stats := choice.stats) is not None:
                 for key, value in stats.items():
                     if key not in self.stats.keys():
                         self.stats[key] = value
                     else:
                         self.stats[key] += value
-                    self.drawer.update_current_text(
-                        words=f'{key}: {f"+{value}" if value >= 0 else value}',
-                        centered=True,
-                        delay=0.01
-                    )
-                    self.drawer.show_current_text_appearance_animation()
-                    time.sleep(1)
-            if result.get('words', None) is not None:
-                self.drawer.update_current_text(
-                    words=result.get('words', ''),
-                    character=result.get('character', None),
-                    title=result.get('title', None),
-                    centered=result.get('centered', False),
-                    delay=result.get('delay', None)
+                    #self.update_current_text(text=f'{key}: {f"+{value}" if value >= 0 else value}', centered=True)
+
+            if choice.words is not None:
+                self.current_text = GameText(
+                    words=choice.words,
+                    character=choice.character,
+                    title=choice.title,
+                    centered=choice.centered,
+                    font=self.font,
+                    screen=self.screen,
+                    background_size_mul=self.text_overlay_height_mul
                 )
-                self.drawer.show_current_text_appearance_animation()
-                if result.get('repeat', False):
+                if choice.repeat:
                     self.repeat += 1
-            elif (next_key := result.get('label', None)) is not None:
-                self.current_position = self.chapter.get(next_key)
+            elif (next_key := choice.label) is not None:
+                self.current_position = self.chapter.labels.get(next_key)
                 self.current_text_position = 0
                 if self.current_position is not None:
                     self.update_current_position()
         else:
-            if self.dairy.dairy_button.is_clicked(mouse_position=mouse_position):
-                self.dairy.open_dairy()
+            pass
+            #if self.dairy.dairy_button.is_clicked(mouse_position=mouse_position):
+            #    self.dairy.open_dairy()
 
     def update_dairy(self):
         texts = self.current_position.get('texts')
@@ -163,4 +158,4 @@ class Chapter:
                 tasks = texts[self.current_text_position].get('tasks', {})
                 theory = texts[self.current_text_position].get('theory', {})
                 self.dairy.update(plot=plot, tasks=tasks, theory=theory)
-'''
+

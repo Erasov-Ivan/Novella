@@ -77,6 +77,7 @@ class Choice:
             title: str | None = None,
             label: str | None = None,
             words: str | None = None,
+            centered: bool | None = None,
             repeat: bool | None = None,
             stats: dict | None = None,
             tasks: Tasks | None = None,
@@ -88,6 +89,7 @@ class Choice:
         self.title = title
         self.label = label
         self.words = words
+        self.centered = centered
         self.repeat = repeat
         self.stats = stats
         self.tasks = tasks
@@ -105,6 +107,7 @@ class Choice:
         if self.title is not None: result[TITLE] = self.title
         if self.label is not None: result[LABEL] = self.label
         if self.words is not None: result[WORDS] = self.words
+        if self.centered is not None: result[CENTERED] = self.centered
         if self.repeat is not None: result[REPEAT] = self.repeat
         if self.stats is not None: result[STATS] = self.stats
         if self.tasks is not None: result[TASKS] = self.tasks.__dict__()

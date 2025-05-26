@@ -30,9 +30,10 @@ while running:
             chapter.next()
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
-                #chapter.process_button_click(mouse_position=mouse_position)
+                chapter.process_button_click(mouse_position=mouse_position)
                 pass
 
+    chapter.choices.check_hover(mouse_position=mouse_position)
     chapter.draw()
     pygame.display.flip()
 
