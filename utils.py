@@ -199,7 +199,7 @@ class ButtonsList(Block):
             self, area: BasicSurface,
             font: pygame.font.Font, text_color: Color = BASIC_BUTTON_TEXT_COLOR,
             buttons_color: Color = BASIC_BUTTON_COLOR, buttons_hover_color: Color = BASIC_BUTTON_HOVER_COLOR,
-            height_interval: int = 10,
+            height_interval: int = 10, button_height: int | None = None,
             border_color: Color = BASIC_BUTTON_BORDER_COLOR, border_size: int = 2
     ):
         super().__init__(
@@ -210,6 +210,10 @@ class ButtonsList(Block):
             fill_color=area.fill_color,
             parent=area
         )
+        if button_height is None:
+            self.button_height = font.get_height() + 10
+        else:
+            self.button_height = button_height
         self.font = font
         self.text_color = text_color
         self.buttons_color = buttons_color
@@ -223,16 +227,14 @@ class ButtonsList(Block):
         self.children = []
         if len(buttons) == 0:
             return
-        button_height = (self.height - self.height_interval * (len(buttons) - 1)) // len(buttons)
         for i in range(len(buttons)):
             caption, callback = buttons[i]
-            print(0, (button_height + self.height_interval) * i, self.width, button_height)
             self.children.append(
                 Button(
-                    x=0,
-                    y=(button_height + self.height_interval) * i,
-                    width=self.width,
-                    height=button_height,
+                    x=self.border_size,
+                    y=(self.button_height + self.height_interval) * i + self.border_size,
+                    width=self.width - self.border_size * 2,
+                    height=self.button_height - self.border_size * 2,
                     text=caption,
                     text_color=self.text_color,
                     font=self.font,

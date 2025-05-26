@@ -5,11 +5,17 @@ from generator import Choice
 class Choices:
     def __init__(
             self, font: pygame.font.Font,
-            x: int, y: int, width: int, height: int
+            screen_width: int, screen_height: int, text_overlay_height_mul: float, text_centered: bool
     ):
         self.font = font
+        if text_centered:
+            x = screen_width // 3
+            y = (screen_height * (1 + text_overlay_height_mul)) // 2 + 10
+        else:
+            x = screen_width // 3 * 2 - 50
+            y = screen_height // 2
         self.buttons_surface = BasicSurface(
-            x=x, y=y, width=width, height=height
+            x=x, y=y, width=screen_width // 3, height=screen_height // 3
         )
         self.buttons = ButtonsList(
             area=self.buttons_surface,

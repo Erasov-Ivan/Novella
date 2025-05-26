@@ -26,14 +26,7 @@ class Chapter:
         self.current_text: GameText = None
         self.repeat = 0
 
-        y = int((self.screen.get_height() + self.screen.get_height() * self.text_overlay_height_mul) // 2)
-        self.choices = Choices(
-            font=self.font,
-            x=self.screen.get_width() // 3,
-            y=y,
-            width=self.screen.get_width() // 3,
-            height=self.screen.get_height() - y - 50
-        )
+        self.choices = None
 
     def start(self):
         #self.update_dairy()
@@ -42,7 +35,7 @@ class Chapter:
         self.update_current_choices()
 
     def next(self):
-        if len(self.choices.buttons.children) > 0:
+        if self.choices is not None and len(self.choices.buttons.children) > 0:
             return
 
         if self.repeat > 0:
@@ -97,6 +90,11 @@ class Chapter:
 
     def update_current_choices(self):
         if self.current_position.texts[self.current_text_position].choices is not None:
+            self.choices = Choices(
+                screen_width=self.screen.get_width(), screen_height=self.screen.get_height(), font=self.font,
+                text_overlay_height_mul=self.text_overlay_height_mul,
+                text_centered=self.current_position.texts[self.current_text_position].centered
+            )
             self.choices.update_buttons(choices=self.current_position.texts[self.current_text_position].choices)
 
     def update_current_position(self):
@@ -109,42 +107,44 @@ class Chapter:
     def draw(self):
         self.background.draw()
         self.current_text.draw()
-        self.choices.draw(dest=self.screen)
+        if self.choices is not None:
+            self.choices.draw(dest=self.screen)
 
     def process_button_click(self, mouse_position: tuple[int, int]):
-        callback = self.choices.check_mouse_click(mouse_position=mouse_position)
-        if callback is not None:
-            index = int(callback)
-            self.choices.update_buttons([])
-            self.current_position.texts[self.current_text_position].choices[index].done = True
-            choice = self.current_position.texts[self.current_text_position].choices[index]
-            #self.dairy.update(plot=choice.plot, tasks=choice.tasks, theory=choice.theory)
+        if self.choices is not None:
+            callback = self.choices.check_mouse_click(mouse_position=mouse_position)
+            if callback is not None:
+                index = int(callback)
+                self.choices = None
+                self.current_position.texts[self.current_text_position].choices[index].done = True
+                choice = self.current_position.texts[self.current_text_position].choices[index]
+                #self.dairy.update(plot=choice.plot, tasks=choice.tasks, theory=choice.theory)
 
-            if (stats := choice.stats) is not None:
-                for key, value in stats.items():
-                    if key not in self.stats.keys():
-                        self.stats[key] = value
-                    else:
-                        self.stats[key] += value
-                    #self.update_current_text(text=f'{key}: {f"+{value}" if value >= 0 else value}', centered=True)
+                if (stats := choice.stats) is not None:
+                    for key, value in stats.items():
+                        if key not in self.stats.keys():
+                            self.stats[key] = value
+                        else:
+                            self.stats[key] += value
+                        #self.update_current_text(text=f'{key}: {f"+{value}" if value >= 0 else value}', centered=True)
 
-            if choice.words is not None:
-                self.current_text = GameText(
-                    words=choice.words,
-                    character=choice.character,
-                    title=choice.title,
-                    centered=choice.centered,
-                    font=self.font,
-                    screen=self.screen,
-                    background_size_mul=self.text_overlay_height_mul
-                )
-                if choice.repeat:
-                    self.repeat += 1
-            elif (next_key := choice.label) is not None:
-                self.current_position = self.chapter.labels.get(next_key)
-                self.current_text_position = 0
-                if self.current_position is not None:
-                    self.update_current_position()
+                if choice.words is not None:
+                    self.current_text = GameText(
+                        words=choice.words,
+                        character=choice.character,
+                        title=choice.title,
+                        centered=choice.centered,
+                        font=self.font,
+                        screen=self.screen,
+                        background_size_mul=self.text_overlay_height_mul
+                    )
+                    if choice.repeat:
+                        self.repeat += 1
+                elif (next_key := choice.label) is not None:
+                    self.current_position = self.chapter.labels.get(next_key)
+                    self.current_text_position = 0
+                    if self.current_position is not None:
+                        self.update_current_position()
         else:
             pass
             #if self.dairy.dairy_button.is_clicked(mouse_position=mouse_position):
