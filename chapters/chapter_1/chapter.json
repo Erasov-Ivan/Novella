@@ -808,7 +808,10 @@
           "question": "Мельник пошел на мельницу и увидел в каждом углу по 3 кошки. Сколько ног на мельнице?",
           "answer": "50",
           "right_label": "fuss_right_answer",
-          "wrong_label": "fuss_wrong_answer"
+          "wrong_label": "fuss_wrong_answer",
+          "stats": {
+              "Интеллект": 1
+            }
         }
       }
     ]
