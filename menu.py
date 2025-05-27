@@ -63,3 +63,6 @@ class MainMenu:
             self.chapters_list.check_hovers(*mouse_position)
             draw_surface(source=self.surface, dest=self.screen)
             pygame.display.flip()
+
+    def update_buttons(self, buttons: list[tuple[str, str]]):
+        self.chapters_list.update_buttons(buttons=buttons)

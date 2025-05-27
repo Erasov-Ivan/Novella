@@ -1,5 +1,4 @@
-import pygame
-import time
+from saves import Saver
 from choices import Choices
 from dairy import Dairy
 from generator import ChapterGenerator
@@ -14,6 +13,7 @@ class Chapter:
             font: pygame.font.Font,
             path: str,
             dairy: Dairy,
+            saver: Saver,
             stats: dict = {},
             text_overlay_height_mul: float = 1/6,
             current_label: str = 'start',
@@ -21,6 +21,7 @@ class Chapter:
     ):
         self.stats = stats
         self.dairy = dairy
+        self.saver = saver
         self.path = path
         self.chapter = ChapterGenerator()
         self.chapter.load(f'{self.path}/chapter.json')
@@ -41,13 +42,7 @@ class Chapter:
             screen=self.screen, font=self.font, text_overlay_height_mul=self.text_overlay_height_mul
         )
 
-    def start(self):
-        self.update_dairy()
-        self.update_current_text()
-        self.update_current_background()
-        self.update_current_choices()
-
-    def next(self):
+    def next(self) -> None | bool:
         if self.choices is not None and len(self.choices.buttons.children) > 0:
             return
 
@@ -80,6 +75,8 @@ class Chapter:
                 self.update_current_choices()
                 return
         if (next_key := self.current_position.next) is not None:
+            if next_key == 'end':
+                return True
             self.current_text_position = 0
             self.current_position = self.chapter.labels.get(next_key)
             self.update_dairy()
@@ -189,3 +186,44 @@ class Chapter:
             else:
                 self.stats[key] += value
 
+    def start(self):
+        self.update_dairy()
+        self.update_current_text()
+        self.update_current_background()
+        self.update_current_choices()
+        start_time = time.time()
+        clock = pygame.time.Clock()
+        FPS = 60
+        running = True
+        while running:
+            mouse_position = pygame.mouse.get_pos()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    running = False
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    ended = self.next()
+                    if ended:
+                        self.saver.finish_chapter()
+                        running = False
+                        break
+
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:
+                        self.process_button_click(mouse_position=mouse_position)
+
+            if self.choices is not None:
+                self.choices.check_hover(mouse_position=mouse_position)
+            self.draw()
+
+            self.dairy.dairy_button.check_hover(*mouse_position)
+            self.dairy.draw_button()
+            pygame.display.flip()
+            clock.tick(FPS)
+
+            if time.time() - start_time > 5:
+                start_time = time.time()
+                self.saver.update(
+                    current_label=self.current_position.label,
+                    current_text_position=self.current_text_position,
+                    stats=self.stats
+                )

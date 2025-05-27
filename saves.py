@@ -54,6 +54,8 @@ class Saver:
 
     def finish_chapter(self):
         self.current_chapter = self.config.get(self.current_chapter, {}).get('next')
+        self.current_label = 'start'
+        self.current_text_position = 0
 
     def update(
             self,
