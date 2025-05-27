@@ -12,7 +12,9 @@ class Chapter:
             self, screen: pygame.Surface, font: pygame.font.Font, path: str,
             dairy: Dairy,
             stats: dict = {},
-            text_overlay_height_mul: float = 1/6
+            text_overlay_height_mul: float = 1/6,
+            current_label: str = 'start',
+            current_text_position: int = 0
     ):
         self.stats = stats
         self.dairy = dairy
@@ -24,8 +26,8 @@ class Chapter:
         self.font = font
         self.text_overlay_height_mul = text_overlay_height_mul
 
-        self.current_position = self.chapter.labels.get('start', None)
-        self.current_text_position = 0
+        self.current_position = self.chapter.labels.get(current_label, None)
+        self.current_text_position = current_text_position
         if self.current_position is None:
             raise ValueError("No start point")
         self.current_text: GameText = None

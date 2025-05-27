@@ -1,0 +1,12 @@
+{
+  "start": {
+    "title": "Пролог",
+    "path": "chapter_1",
+    "next": "1"
+  },
+  "1": {
+    "title": "Глава 1",
+    "path": "chapter_1",
+    "next": "2"
+  }
+}

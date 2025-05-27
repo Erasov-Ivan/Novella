@@ -1,7 +1,8 @@
 import pygame
+from menu import MainMenu
+import json
 from chapter import Chapter
 from dairy import Dairy
-from generator import Tasks
 
 pygame.init()
 
@@ -15,27 +16,70 @@ pygame.display.set_caption("Курсач")
 clock = pygame.time.Clock()
 
 
-dairy = Dairy(
-    screen=screen,
-    font=FONT
-)
-dairy.update(
-    tasks=Tasks(
-        add={
-            '1': 'task 1',
-            '2': 'task 2',
-            '3': 'very very very long task number three'
+def save(current_chapter: str, current_label: str, current_text_position: int, stats: dict):
+    with open('save.json', 'w', encoding='utf-8-sig', errors='ignore') as f:
+        result = {
+            'current_chapter': current_chapter,
+            'current_label': current_label,
+            'current_text_position': current_text_position,
+            'stats': stats
         }
-    )
+        f.write(json.dumps(result))
+
+
+try:
+    with open('save.json', 'r', encoding='utf-8-sig', errors='ignore') as f:
+        data = json.load(f)
+except FileNotFoundError:
+    data = {}
+
+current_chapter = data.get('current_chapter', 'start')
+current_label = data.get('current_label', 'start')
+current_text_position = data.get('current_text_position', 0)
+stats = data.get('stats', {})
+
+
+with open('chapters/config.json', 'r', encoding='utf-8-sig', errors='ignore') as f:
+    config = json.load(f)
+
+already_done = True
+buttons = []
+next_key = 'start'
+while next_key is not None:
+    chapter = config.get(next_key, None)
+    if chapter is None:
+        break
+    if next_key == current_chapter:
+        already_done = False
+        buttons.append((chapter.get('title') + ' - Продолжить', next_key))
+    else:
+        if already_done:
+            buttons.append((chapter.get('title') + ' - Выполнено', next_key))
+        else:
+            buttons.append((chapter.get('title'), ''))
+    next_key = chapter.get('next', None)
+
+
+main_menu = MainMenu(
+    screen=screen,
+    font=FONT,
+    buttons=buttons
 )
 
+chapter_key = main_menu.chose_chapter()
+path = config.get(chapter_key, {}).get('path')
 chapter = Chapter(
     screen=screen,
     font=FONT,
-    path='chapters/chapter_1',
-    dairy=dairy
+    path=f'chapters/{path}',
+    dairy=Dairy(
+        screen=screen,
+        font=FONT
+    ),
+    stats=stats,
+    current_label=current_label,
+    current_text_position=current_text_position
 )
-
 chapter.start()
 running = True
 while running:
@@ -53,8 +97,8 @@ while running:
         chapter.choices.check_hover(mouse_position=mouse_position)
     chapter.draw()
 
-    dairy.dairy_button.check_hover(*mouse_position)
-    dairy.draw_button()
+    chapter.dairy.dairy_button.check_hover(*mouse_position)
+    chapter.dairy.draw_button()
     pygame.display.flip()
     clock.tick(FPS)
 
