@@ -61,6 +61,7 @@ class MainMenu:
                             return res
 
             self.chapters_list.check_hovers(*mouse_position)
+            self.screen.fill(Color('black'))
             draw_surface(source=self.surface, dest=self.screen)
             pygame.display.flip()
 
