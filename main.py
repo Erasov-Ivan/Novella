@@ -26,6 +26,8 @@ main_menu = MainMenu(
 )
 
 chapter_key = main_menu.chose_chapter()
+if chapter_key is None:
+    exit()
 path = saver.get_chapter_path(key=chapter_key)
 chapter = Chapter(
     screen=screen,
@@ -62,7 +64,7 @@ while running:
     pygame.display.flip()
     clock.tick(FPS)
 
-    if time.time() - start_time > 60:
+    if time.time() - start_time > 5:
         start_time = time.time()
         saver.update(
             current_label=chapter.current_position.label,

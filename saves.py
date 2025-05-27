@@ -25,7 +25,7 @@ class Saver:
                 'current_text_position': self.current_text_position,
                 'stats': self.stats
             }
-            f.write(json.dumps(result))
+            f.write(json.dumps(result, ensure_ascii=False))
 
     def get_chapters_buttons(self) -> list[tuple[str, str]]:
         already_done = True
@@ -37,7 +37,10 @@ class Saver:
                 break
             if next_key == self.current_chapter:
                 already_done = False
-                buttons.append((chapter.get('title') + ' - Продолжить', next_key))
+                if self.current_label != 'start':
+                    buttons.append((chapter.get('title') + ' - Продолжить', next_key))
+                else:
+                    buttons.append((chapter.get('title') + ' - Начать', next_key))
             else:
                 if already_done:
                     buttons.append((chapter.get('title') + ' - Выполнено', next_key))
