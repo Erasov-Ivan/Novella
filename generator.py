@@ -208,8 +208,10 @@ class Label:
             self,
             texts: list[Text],
             next: str | None = None,
-            background: Background | None = None
+            background: Background | None = None,
+            label: str | None = None,
     ):
+        self.label = label
         self.texts = texts
         self.next = next
         self.background = background
@@ -338,6 +340,7 @@ class ChapterGenerator:
                 )
                 texts.append(text)
             self.labels[label] = Label(
+                label=label,
                 background=background,
                 texts=texts,
                 next=next_label

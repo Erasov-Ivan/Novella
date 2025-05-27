@@ -9,7 +9,10 @@ from utils import *
 
 class Chapter:
     def __init__(
-            self, screen: pygame.Surface, font: pygame.font.Font, path: str,
+            self,
+            screen: pygame.Surface,
+            font: pygame.font.Font,
+            path: str,
             dairy: Dairy,
             stats: dict = {},
             text_overlay_height_mul: float = 1/6,

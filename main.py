@@ -3,6 +3,7 @@ from menu import MainMenu
 from saves import Saver
 from chapter import Chapter
 from dairy import Dairy
+import time
 
 pygame.init()
 
@@ -38,6 +39,7 @@ chapter = Chapter(
     current_label=saver.current_label,
     current_text_position=saver.current_text_position
 )
+start_time = time.time()
 chapter.start()
 running = True
 while running:
@@ -60,5 +62,13 @@ while running:
     pygame.display.flip()
     clock.tick(FPS)
 
+    if time.time() - start_time > 60:
+        start_time = time.time()
+        saver.update(
+            current_label=chapter.current_position.label,
+            current_text_position=chapter.current_text_position,
+            stats=chapter.stats
+        )
+saver.save()
 pygame.quit()
 
