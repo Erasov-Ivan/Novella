@@ -115,12 +115,19 @@ class Chapter:
 
     def update_current_choices(self):
         if self.current_position.texts[self.current_text_position].choices is not None:
+            unclicked_choices = []
+            for choice in self.current_position.texts[self.current_text_position].choices:
+                if not choice.done:
+                    unclicked_choices.append(choice)
+            if len(unclicked_choices) == 0:
+                self.next()
+                return
             self.choices = Choices(
                 screen_width=self.screen.get_width(), screen_height=self.screen.get_height(), font=self.font,
                 text_overlay_height_mul=self.text_overlay_height_mul,
                 text_centered=self.current_position.texts[self.current_text_position].centered
             )
-            self.choices.update_buttons(choices=self.current_position.texts[self.current_text_position].choices)
+            self.choices.update_buttons(choices=unclicked_choices)
 
     def update_current_position(self):
         if self.current_position is not None:

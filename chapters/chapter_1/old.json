@@ -827,7 +827,7 @@
         "character": "Фусс"
       }
     ],
-    "next": "end"
+    "next": "прощаемся с Фуссом"
   },
   "fuss_wrong_answer": {
     "texts": [
@@ -844,6 +844,6 @@
         "character": "Фусс"
       }
     ],
-    "next": "end"
+    "next": "прощаемся с Фуссом"
   }
 }

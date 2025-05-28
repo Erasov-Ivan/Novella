@@ -3,7 +3,6 @@ from menu import MainMenu
 from saves import Saver
 from chapter import Chapter
 from dairy import Dairy
-import time
 
 pygame.init()
 
