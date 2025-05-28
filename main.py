@@ -12,7 +12,7 @@ FPS = 60
 
 FONT = pygame.font.SysFont('Arial', 24)
 screen = pygame.display.set_mode(size=(SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Курсач")
+pygame.display.set_caption("Новелла")
 clock = pygame.time.Clock()
 
 saver = Saver()
