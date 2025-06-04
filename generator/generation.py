@@ -5,6 +5,7 @@ generator = ChapterGenerator()
 # Подгружаем сюда текущий файл главы чтобы прописывать его дальше
 generator.load(filename='../chapters/chapter_1/old.json')
 PERSON_FUSS = 'Фусс'
+PERSON_BERN = 'Бернулли'
 
 generator.labels['прощаемся с Фуссом'] = Label(
     texts=[
@@ -68,6 +69,50 @@ generator.labels['пойти к бернулли'] = Label(
         )
     ],
     next='встреча с бернулли'
+)
+
+generator.labels['встреча с бернулли'] = Label(
+    background=Background(
+        image='images/13.webp'
+    ),
+    texts=[
+        Text(
+            words='Скрипнула входная дверь и навстречу нам вышел Иоганн Бернулли.',
+            centered=True
+        ),
+        Text(
+            words='На вид он был бодр и весел, хотя опустившийся взгляд и прихрамывание выдавали его почтенный возраст.',
+            centered=True
+        ),
+        Text(
+            words='Старик улыбнулся, приоткрыл калитку и спросил',
+            centered=True
+        ),
+        Text(
+            character=PERSON_BERN,
+            words='Доброго дня…{sleep 0.3} Мне сегодня уже доставили свежую газету, вторую мне не надо.',
+        ),
+        Text(
+            words='',
+            choices=[
+                Choice(
+                    caption='Кнопка 1',
+                    stats={
+                        'Интеллект': 1
+                    }
+                )
+            ],
+        ),
+        Text(
+            words='asdasd',
+            question=Question(
+                question='?',
+                answer='ответ',
+                right_label='',
+                wrong_label=''
+            )
+        )
+    ]
 )
 
 generator.save(filename='chapter.json')
