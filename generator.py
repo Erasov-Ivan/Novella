@@ -65,12 +65,17 @@ class Plot:
 class Theory:
     def __init__(
             self,
-            smth: str | None = None
+            chapter: str,
+            add: list[str]
     ):
-        self.smth = smth
+        self.chapter = chapter
+        self.add = add
 
     def __dict__(self):
-        return {}
+        return {
+            CHAPTER: self.chapter,
+            ADD: self.add
+        }
 
 
 class Question:

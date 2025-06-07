@@ -67,11 +67,12 @@ class BasicText(Block):
 
     def draw(self, dest: pygame.Surface):
         text = self.font.render(self.text, True, self.text_color)
+        start_offset_from_middle = self.font.size(self.text[:(len(self.text) + 1) // 2])[0]
         if self.position == 'left':
             text_rect = text.get_rect(midleft=(0, dest.get_height() / 2))
         else:
             text_rect = text.get_rect(
-                midleft=(dest.get_width() / 2 - self.start_offset_from_middle, dest.get_height() / 2)
+                midleft=(dest.get_width() / 2 - start_offset_from_middle, dest.get_height() / 2)
             )
         dest.blit(
             source=text,
