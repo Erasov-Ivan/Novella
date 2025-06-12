@@ -38,7 +38,10 @@ while running:
             path=f'chapters/{path}',
             dairy=Dairy(
                 screen=screen,
-                font=FONT
+                font=FONT,
+                plot=saver.plot,
+                tasks=saver.tasks,
+                theory=saver.theory
             ),
             saver=saver,
             stats=saver.stats,

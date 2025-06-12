@@ -91,26 +91,6 @@ generator.labels['встреча с бернулли'] = Label(
         Text(
             character=PERSON_BERN,
             words='Доброго дня…{sleep 0.3} Мне сегодня уже доставили свежую газету, вторую мне не надо.',
-        ),
-        Text(
-            words='',
-            choices=[
-                Choice(
-                    caption='Кнопка 1',
-                    stats={
-                        'Интеллект': 1
-                    }
-                )
-            ],
-        ),
-        Text(
-            words='asdasd',
-            question=Question(
-                question='?',
-                answer='ответ',
-                right_label='',
-                wrong_label=''
-            )
         )
     ]
 )

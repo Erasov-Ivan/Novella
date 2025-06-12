@@ -5,7 +5,8 @@ from generator import *
 class Dairy:
     def __init__(
             self, screen: pygame.Surface, font: pygame.font.Font,
-            button_size: int = 40,
+            plot: dict, tasks: dict, theory: dict,
+            button_size: int = 40
     ):
         self.screen = screen
         self.screen_width = screen.get_width()
@@ -23,9 +24,9 @@ class Dairy:
             parent=None
         )
 
-        self.plot = {}
-        self.tasks = {}
-        self.theory = {}
+        self.plot = plot
+        self.tasks = tasks
+        self.theory = theory
 
         self.surface = BasicSurface(
             x=self.screen_width // 4,

@@ -232,5 +232,5 @@ class Chapter:
                 self.saver.update(
                     current_label=self.current_position.label,
                     current_text_position=self.current_text_position,
-                    stats=self.stats
+                    stats=self.stats, plot=self.dairy.plot, tasks=self.dairy.tasks, theory=self.dairy.theory
                 )

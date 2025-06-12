@@ -13,6 +13,9 @@ class Saver:
         self.current_label = data.get('current_label', 'start')
         self.current_text_position = data.get('current_text_position', 0)
         self.stats = data.get('stats', {})
+        self.plot = data.get('plot', {})
+        self.tasks = data.get('tasks', {})
+        self.theory = data.get('theory', {})
 
         with open('chapters/config.json', 'r', encoding='utf-8-sig', errors='ignore') as f:
             self.config = json.load(f)
@@ -23,7 +26,10 @@ class Saver:
                 'current_chapter': self.current_chapter,
                 'current_label': self.current_label,
                 'current_text_position': self.current_text_position,
-                'stats': self.stats
+                'stats': self.stats,
+                'plot': self.plot,
+                'tasks': self.tasks,
+                'theory': self.theory
             }
             f.write(json.dumps(result, ensure_ascii=False))
 
@@ -62,7 +68,10 @@ class Saver:
             current_chapter: str | None = None,
             current_label: str | None = None,
             current_text_position: int | None = None,
-            stats: dict | None = None
+            stats: dict | None = None,
+            plot: dict | None = None,
+            tasks: dict | None = None,
+            theory: dict | None = None
     ):
         if current_chapter is not None:
             self.current_chapter = current_chapter
@@ -72,3 +81,9 @@ class Saver:
             self.current_text_position = current_text_position
         if stats is not None:
             self.stats = stats
+        if plot is not None:
+            self.plot = plot
+        if tasks is not None:
+            self.tasks = tasks
+        if theory is not None:
+            self.theory = theory
