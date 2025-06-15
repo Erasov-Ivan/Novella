@@ -66,6 +66,31 @@ class Chapter:
             self.update_current_position()
             return
 
+        if (s := self.current_position.texts[self.current_text_position].if_stats) is not None:
+            operand_1 = s.operand_1
+            operand_2 = s.operand_2
+            operation = s.operation
+            label_true = s.label_true
+            label_false = s.label_false
+            try:
+                operand_1 = int(operand_1)
+            except:
+                operand_1 = self.stats.get(operand_1, 0)
+            try:
+                operand_2 = int(operand_2)
+            except:
+                operand_2 = self.stats.get(operand_2, 0)
+            if eval(f'{operand_1} {operation} {operand_2}'):
+                next_key = label_true
+            else:
+                next_key = label_false
+            if next_key == 'end':
+                return True
+            self.current_text_position = 0
+            self.current_position = self.chapter.labels.get(next_key)
+            self.update_dairy()
+            self.update_current_position()
+
         texts = self.current_position.texts
         if texts is not None:
             self.current_text_position += 1
@@ -127,7 +152,7 @@ class Chapter:
                 text_overlay_height_mul=self.text_overlay_height_mul,
                 text_centered=self.current_position.texts[self.current_text_position].centered
             )
-            self.choices.update_buttons(choices=unclicked_choices)
+            self.choices.update_buttons(choices=self.current_position.texts[self.current_text_position].choices)
 
     def update_current_position(self):
         if self.current_position is not None:

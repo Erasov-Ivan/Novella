@@ -1,7 +1,22 @@
 {
   "start": {
     "title": "Глава 1",
-    "path": "chapter_1",
+    "path": "chapter_0",
     "next": "2"
+  },
+  "2": {
+    "title": "Глава 2",
+    "path": "chapter_1",
+    "next": "3"
+  },
+  "3": {
+    "title": "Глава 3",
+    "path": "chapter_2",
+    "next": "4"
+  },
+  "4": {
+    "title": "Глава 4",
+    "path": "chapter_3",
+    "next": "end"
   }
 }

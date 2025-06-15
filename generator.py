@@ -26,6 +26,10 @@ REMOVE = 'remove'
 TASKS = 'tasks'
 PLOT = 'plot'
 THEORY = 'theory'
+OPERAND_1 = 'operand_1'
+OPERAND_2 = 'operand_2'
+OPERATION = 'operation'
+IF_STATS = 'if_stats'
 
 COLOR_BLACK = 'black'
 
@@ -151,6 +155,33 @@ class Choice:
         return result
 
 
+class IfStats:
+    def __init__(
+            self,
+            operand_1: str,
+            operand_2: str,
+            operation: str,
+            label_true: str,
+            label_false: str
+    ):
+        self.operand_1 = operand_1
+        self.operand_2 = operand_2
+        self.operation = operation
+        self.label_true = label_true
+        self.label_false = label_false
+        if None in [operand_1, operand_2, operation, label_true, label_false]:
+            raise ValueError("All fields of IfStats must be not None")
+
+    def __dict__(self):
+        return {
+            OPERAND_1: self.operand_1,
+            OPERAND_2: self.operand_2,
+            OPERATION: self.operation,
+            RIGHT_LABEL: self.label_true,
+            WRONG_LABEL: self.label_false
+        }
+
+
 class Text:
     def __init__(
             self,
@@ -163,7 +194,8 @@ class Text:
             question: Question | None = None,
             tasks: Tasks | None = None,
             plot: Plot | None = None,
-            theory: Theory | None = None
+            theory: Theory | None = None,
+            if_stats: IfStats | None = None
     ):
         self.words = words
         self.character = character
@@ -175,6 +207,7 @@ class Text:
         self.tasks = tasks
         self.plot = plot
         self.theory = theory
+        self.if_stats = if_stats
 
     def __dict__(self):
         result = {WORDS: self.words}
@@ -187,6 +220,7 @@ class Text:
         if self.tasks is not None: result[TASKS] = self.tasks.__dict__()
         if self.plot is not None: result[PLOT] = self.plot.__dict__()
         if self.theory is not None: result[THEORY] = self.theory.__dict__()
+        if self.if_stats is not None: result[IF_STATS] = self.if_stats.__dict__()
         return result
 
 
@@ -274,6 +308,17 @@ class ChapterGenerator:
                     )
                 else:
                     question = None
+                if_stats_raw: dict = t.get(IF_STATS, {})
+                if if_stats_raw != {}:
+                    if_stats = IfStats(
+                        operand_1=if_stats_raw.get(OPERAND_1),
+                        operand_2=if_stats_raw.get(OPERAND_2),
+                        operation=if_stats_raw.get(OPERATION),
+                        label_true=if_stats_raw.get(RIGHT_LABEL),
+                        label_false=if_stats_raw.get(WRONG_LABEL)
+                    )
+                else:
+                    if_stats = None
                 choices_raw = t.get(CHOICES, [])
                 if len(choices_raw) == 0:
                     choices = None
@@ -341,7 +386,8 @@ class ChapterGenerator:
                     question=question,
                     tasks=tasks,
                     plot=plot,
-                    theory=theory
+                    theory=theory,
+                    if_stats=if_stats
                 )
                 texts.append(text)
             self.labels[label] = Label(

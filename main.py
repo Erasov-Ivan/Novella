@@ -6,8 +6,8 @@ from dairy import Dairy
 
 pygame.init()
 
-SCREEN_WIDTH = 1600
-SCREEN_HEIGHT = 900
+SCREEN_WIDTH = 1400
+SCREEN_HEIGHT = 700
 FPS = 60
 
 FONT = pygame.font.SysFont('Arial', 24)
